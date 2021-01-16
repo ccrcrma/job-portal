@@ -32,15 +32,17 @@ namespace job_portal
                     .UseMySql(
                         Configuration.GetSection("Database")["ConnectionString"],
                         new MySqlServerVersion(new Version(
-                            int.Parse(Configuration["Database:Version:Major"]),
-                            int.Parse(Configuration["Database:Version:Minor"]),
-                            int.Parse(Configuration["Database:Version:Build"])
+                            int.Parse(Configuration["Database:DbVersion:Major"]),
+                            int.Parse(Configuration["Database:DbVersion:Minor"]),
+                            int.Parse(Configuration["Database:DbVersion:Build"])
                             )),
                         mySqlOptions => mySqlOptions
                             .CharSetBehavior(CharSetBehavior.NeverAppend))
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors()
+
             );
+            Task.Run(() => new SeedData(services.BuildServiceProvider()).SeedAll());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

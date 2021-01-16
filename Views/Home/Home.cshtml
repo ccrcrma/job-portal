@@ -1,3 +1,28 @@
+@model HomeViewModel
+@{
+    ViewBag.Title = "Home";
+    Random rnd = new Random();
+    Dictionary<string, string> categoryToClassName = new Dictionary<string, string>(){
+        {"Design & Creative", "tour"},
+        {"Design & Development", "cms"},
+        {"Sales & Marketing", "report"},
+        {"Mobile Application", "app"}, 
+        {"Construction", "helmet"}, 
+        {"Information Technology", "high-tech"}, 
+        {"Real Estate", "real-estate"}, 
+        {"Content Writer", "content"}
+    };
+
+        string GetCssClassName(string category){
+          if(categoryToClassName.TryGetValue(category, out string className)){
+              return className;
+          }else {
+              return "app";
+          }
+        }
+    }
+}
+
 <!-- slider Area Start-->
 <div class="slider-area ">
     <!-- Mobile Menu -->
@@ -52,94 +77,20 @@
             </div>
         </div>
         <div class="row d-flex justify-contnet-center">
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span class="flaticon-tour"></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="job_listing.html">Design & Creative</a></h5>
-                        <span>(653)</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span class="flaticon-cms"></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="job_listing.html">Design & Development</a></h5>
-                        <span>(658)</span>
+            @foreach(var category in Model.Categories)
+                {
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                    <div class="single-services text-center mb-30">
+                        <div class="services-ion">
+                            <span class="flaticon-@GetCssClassName(category.Name)"></span>
+                        </div>
+                        <div class="services-cap">
+                            <h5><a href="job_listing.html">@category.Name</a></h5>
+                            <span>(@rnd.Next(0,25))</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span class="flaticon-report"></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="job_listing.html">Sales & Marketing</a></h5>
-                        <span>(658)</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span class="flaticon-app"></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="job_listing.html">Mobile Application</a></h5>
-                        <span>(658)</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span class="flaticon-helmet"></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="job_listing.html">Construction</a></h5>
-                        <span>(658)</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span class="flaticon-high-tech"></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="job_listing.html">Information Technology</a></h5>
-                        <span>(658)</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span class="flaticon-real-estate"></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="job_listing.html">Real Estate</a></h5>
-                        <span>(658)</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span class="flaticon-content"></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="job_listing.html">Content Writer</a></h5>
-                        <span>(658)</span>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
 </div>
@@ -172,7 +123,7 @@
         </div>
         <div class="row justify-content-center">
         <!-- Left content -->
-            <div class="col-xl-3 col-lg-3 col-md-4">
+            <div class="col-xl-3 col-lg-3 col-md-4 show-more">
                 <div class="row">
                     <div class="col-12">
                             <div class="small-section-tittle2 mb-45">
@@ -334,7 +285,7 @@
             </div>
             <!-- Right content -->
             <div class="col-xl-9 col-md-8">
-                <div class="row">
+                <div class="row show-more">
                     <div class="col-lg-12">
                         <div class="count-job mb-35 d-flex">
                             <span class="mr-auto">39, 782 Jobs found</span>
@@ -503,56 +454,24 @@
             <div class="col-xl-8 col-lg-8 col-md-10">
                 <div class="h1-testimonial-active dot-style">
                     <!-- Single Testimonial -->
-                    <div class="single-testimonial text-center">
-                        <!-- Testimonial Content -->
-                        <div class="testimonial-caption ">
-                            <!-- founder -->
-                            <div class="testimonial-founder  ">
-                                <div class="founder-img mb-30">
-                                    <img src="~/img/testmonial/testimonial-founder.png" alt="">
-                                    <span>Margaret Lawson</span>
-                                    <p>Creative Director</p>
+                    @foreach(var testimonial in Model.Testimonials){
+                        <div class="single-testimonial text-center">
+                            <!-- Testimonial Content -->
+                            <div class="testimonial-caption ">
+                                <!-- founder -->
+                                <div class="testimonial-founder  ">
+                                    <div class="founder-img mb-30">
+                                        <img src="~/img/testmonial/testimonial-founder.png" alt="">
+                                        <span>@testimonial.Name</span>
+                                        <p>@testimonial.Designation</p>
+                                    </div>
+                                </div>
+                                <div class="testimonial-top-cap">
+                                    <p>“@testimonial.Description”</p>
                                 </div>
                             </div>
-                            <div class="testimonial-top-cap">
-                                <p>“I am at an age where I just want to be fit and healthy our bodies are our responsibility! So start caring for your body and it will care for you. Eat clean it will care for you and workout hard.”</p>
-                            </div>
                         </div>
-                    </div>
-                    <!-- Single Testimonial -->
-                    <div class="single-testimonial text-center">
-                        <!-- Testimonial Content -->
-                        <div class="testimonial-caption ">
-                            <!-- founder -->
-                            <div class="testimonial-founder  ">
-                                <div class="founder-img mb-30">
-                                    <img src="~/img/testmonial/testimonial-founder.png" alt="">
-                                    <span>Margaret Lawson</span>
-                                    <p>Creative Director</p>
-                                </div>
-                            </div>
-                            <div class="testimonial-top-cap">
-                                <p>“I am at an age where I just want to be fit and healthy our bodies are our responsibility! So start caring for your body and it will care for you. Eat clean it will care for you and workout hard.”</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Single Testimonial -->
-                    <div class="single-testimonial text-center">
-                        <!-- Testimonial Content -->
-                        <div class="testimonial-caption ">
-                            <!-- founder -->
-                            <div class="testimonial-founder  ">
-                                <div class="founder-img mb-30">
-                                    <img src="~/img/testmonial/testimonial-founder.png" alt="">
-                                    <span>Margaret Lawson</span>
-                                    <p>Creative Director</p>
-                                </div>
-                            </div>
-                            <div class="testimonial-top-cap">
-                                <p>“I am at an age where I just want to be fit and healthy our bodies are our responsibility! So start caring for your body and it will care for you. Eat clean it will care for you and workout hard.”</p>
-                            </div>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
@@ -603,47 +522,41 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xl-6 col-lg-6 col-md-6">
-                <div class="home-blog-single mb-30">
-                    <div class="blog-img-cap">
-                        <div class="blog-img">
-                            <img src="~/img/blog/home-blog1.jpg" alt="">
-                            <!-- Blog date -->
-                            <div class="blog-date text-center">
-                                <span>24</span>
-                                <p>Now</p>
+            @foreach(var post in Model.Posts){
+
+                <div class="col-xl-6 col-lg-6 col-md-6">
+                    <div class="home-blog-single mb-30">
+                        <div class="blog-img-cap">
+                            <div class="blog-img">
+                                <img src="~/img/blog/home-blog1.jpg" alt="">
+                                <!-- Blog date -->
+                                <div class="blog-date text-center">
+                                    <span>@post.CreatedOn.ToString("dd MMM")</span>
+                                    <p>@post.CreatedOn.ToString("yyyy")</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="blog-cap">
-                            <p>|   Properties</p>
-                            <h3><a href="single-blog.html">Footprints in Time is perfect House in Kurashiki</a></h3>
-                            <a href="#" class="more-btn">Read more »</a>
+                            <div class="blog-cap">
+                                <p>|   Properties</p>
+                                <h3><a asp-action="Detail" asp-controller="Post" asp-route-id="@post.Id">@post.Title</a></h3>
+                                <a href="#" class="more-btn">Read more »</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6">
-                <div class="home-blog-single mb-30">
-                    <div class="blog-img-cap">
-                        <div class="blog-img">
-                            <img src="~/img/blog/home-blog2.jpg" alt="">
-                            <!-- Blog date -->
-                            <div class="blog-date text-center">
-                                <span>24</span>
-                                <p>Now</p>
-                            </div>
-                        </div>
-                        <div class="blog-cap">
-                            <p>|   Properties</p>
-                            <h3><a href="single-blog.html">Footprints in Time is perfect House in Kurashiki</a></h3>
-                            <a href="#" class="more-btn">Read more »</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            }
+
         </div>
     </div>
 </div>
 <!-- Blog Area End -->
 
 
+@section Scripts{
+    <script>
+    document.getElementById("show-filters").onclick = function(){
+        Object.values(document.getElementsByClassName("show-more")).forEach(function(elem){
+            elem.style.display = "block";
+        });
+    }   
+    </script>
+}
