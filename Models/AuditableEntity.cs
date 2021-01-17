@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Humanizer;
 
 namespace job_portal.Models
 {
@@ -8,5 +9,18 @@ namespace job_portal.Models
     {
         public DateTime CreatedOn { get; set; }
         public DateTime UpdatedOn { get; set; }
+
+        public string GetHumanFriendlyCreatedDate
+        {
+            get
+            {
+                var numberOfDays = (DateTime.UtcNow - CreatedOn).Days;
+                if (numberOfDays > 30)
+                {
+                    return CreatedOn.ToString("MMMM dd, yyyy");
+                }
+                return CreatedOn.Humanize();
+            }
+        }
     }
 }

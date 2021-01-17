@@ -13,6 +13,9 @@ namespace job_portal.EFConfigurations
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Title).IsRequired().HasMaxLength(200);
             builder.Property(p => p.Body).IsRequired();
+            builder.HasMany<Tag>(p => p.Tags)
+                .WithMany(t => t.Posts)
+                .UsingEntity(j => j.ToTable("post_tags"));
         }
     }
 }

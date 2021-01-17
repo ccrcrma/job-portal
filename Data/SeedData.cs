@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using job_portal.Models;
+using System.Collections.Generic;
 
 namespace job_portal.Data
 {
@@ -22,9 +23,37 @@ namespace job_portal.Data
             await SeedJobCategoriesAsync();
             await SeedPostCategories();
             await seedTestimonialsAsync();
-            await SeedPostsAsync();
             await SeedTags();
+            await SeedPostsAsync();
+            await SeedJobs();
         }
+
+        private async Task SeedJobs()
+        {
+            if (await _context.Jobs.CountAsync() == 0)
+            {
+                Job[] jobs =
+                {
+                    new Job
+                    {
+                        Title = "Digital Marketer",
+                        Location = "Athens,Greece",
+                        Salary = "3500-4000",
+                        Type = Job.JobType.FullTime
+                    },
+                    new Job
+                    {
+                        Title = "FullStack Developer",
+                        Location = "Florida, US",
+                        Salary = "60000-130000",
+                        Type = Job.JobType.FullTime
+                    }
+                };
+                await _context.Jobs.AddRangeAsync(jobs);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task SeedJobCategoriesAsync()
         {
             if (await _context.Set<JobCategory>().CountAsync() == 0)
@@ -90,26 +119,6 @@ namespace job_portal.Data
             await _context.SaveChangesAsync();
         }
 
-        public async Task SeedPostsAsync()
-        {
-            if (await _context.Posts.CountAsync() == 0)
-            {
-                Post[] posts = {
-                    new Post{
-                        Title = "FootPrints in Time is Perfect House in Kurashiki",
-                        Body = "some random body for the text which is meaningless"
-                    },
-                    new Post{
-                        Title = "FootPrints in Time is Perfect House in Kurashiki",
-                        Body = "some random body for the text which is meaningless"
-                    },
-
-                };
-                await _context.Posts.AddRangeAsync(posts);
-                await _context.SaveChangesAsync();
-            }
-        }
-
         public async Task SeedTags()
         {
             if (await _context.Tags.CountAsync() == 0)
@@ -118,13 +127,38 @@ namespace job_portal.Data
                     new Tag{Name = "project"},
                     new Tag{Name = "love"},
                     new Tag{Name = "technology"},
-                    new Tag{Name = "travel"},
                     new Tag{Name = "restaurant"},
-                    new Tag{Name = "lifestyle"},
                     new Tag{Name = "design"},
                     new Tag{Name = "illustration"},
                 };
                 await _context.Tags.AddRangeAsync(tags);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task SeedPostsAsync()
+        {
+            if (await _context.Posts.CountAsync() == 0)
+            {
+                var postTags = new List<Tag>
+                    {
+                        new Tag{Name = "travel"},
+                        new Tag{Name = "lifestyle"}
+                        };
+                Post[] posts = {
+
+                    new Post{
+                        Title = "FootPrints in Time is Perfect House in Kurashiki",
+                        Body = "some random body for the text which is meaningless",
+                        Tags =postTags
+                    },
+                    new Post{
+                        Title = "FootPrints in Time is Perfect House in Kurashiki",
+                        Body = "some random body for the text which is meaningless",
+                        Tags = postTags
+                    }
+                };
+                await _context.Posts.AddRangeAsync(posts);
                 await _context.SaveChangesAsync();
             }
         }

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using job_portal.Data;
 
 namespace job_portal.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20210117063400_AddTableJob")]
+    partial class AddTableJob
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,14 +89,7 @@ namespace job_portal.Migrations
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("date");
 
-                    b.Property<int>("category_id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(17);
-
                     b.HasKey("Id");
-
-                    b.HasIndex("category_id");
 
                     b.ToTable("job");
                 });
@@ -193,22 +188,6 @@ namespace job_portal.Migrations
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("job_portal.Models.Job", b =>
-                {
-                    b.HasOne("job_portal.Models.JobCategory", "Category")
-                        .WithMany("Jobs")
-                        .HasForeignKey("category_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("job_portal.Models.JobCategory", b =>
-                {
-                    b.Navigation("Jobs");
                 });
 #pragma warning restore 612, 618
         }

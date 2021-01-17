@@ -33,12 +33,25 @@ namespace job_portal.Controllers
             return View();
         }
 
-        public async Task<IActionResult> HomeAsync()
+        public async Task<IActionResult> HomeAsync(string category)
         {
+            var jobs = _context.Jobs.Include(j => j.Category).AsQueryable();
+            if (category != null)
+            {
+                category = category.ToLower();
+                var selectedCategory = await _context.Set<JobCategory>().FirstOrDefaultAsync(c => c.Name.ToLower() == category);
+                if (selectedCategory != null)
+                    jobs = jobs.Where(j => j.Category.Name.ToLower().Equals(category));
+
+            }
+            List<Job> jobLists;
+            jobLists = jobs.ToList();
+
             var categories = await _context.Set<JobCategory>().ToListAsync();
             var testimonials = await _context.Testimonials.ToListAsync();
-            var posts = await _context.Posts.ToListAsync();
-            var vm = new HomeViewModel { Categories = categories, Testimonials = testimonials, Posts = posts };
+            var blogPosts = await _context.Posts.ToListAsync();
+
+            var vm = new HomeViewModel { Jobs = jobLists, Categories = categories, Testimonials = testimonials, Posts = blogPosts };
             return View(vm);
         }
 

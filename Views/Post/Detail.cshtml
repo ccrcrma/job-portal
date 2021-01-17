@@ -13,7 +13,7 @@
                     <div class="blog_details">
                         <h2>@Model.Title</h2>
                         <ul class="blog-info-link mt-3 mb-4">
-                            <li><a href="#"><i class="fa fa-user"></i> Travel, Lifestyle</a></li>
+                            <li><a href="#"><i class="fa fa-user"></i> @Model.getAllTags</a></li>
                             <li><a href="#"><i class="fa fa-comments"></i> 03 Comments</a></li>
                         </ul>
                         <p class="excert">
@@ -303,17 +303,7 @@
                             </li>
                         </ul>
                     </aside>
-                    <aside class="single_sidebar_widget newsletter_widget">
-                        <h4 class="widget_title">Newsletter</h4>
-                        <form action="#">
-                            <div class="form-group">
-                                <input type="email" class="form-control" onfocus="this.placeholder = ''"
-                                    onblur="this.placeholder = 'Enter email'" placeholder='Enter email' required>
-                            </div>
-                            <button class="button rounded-0 primary-bg text-white w-100 btn_1 boxed-btn"
-                                type="submit">Subscribe</button>
-                        </form>
-                    </aside>
+                    <partial name="_NewsLetterPartial"></partial>
                 </div>
             </div>
         </div>

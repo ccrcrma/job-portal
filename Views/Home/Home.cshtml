@@ -148,12 +148,11 @@
                         </div>
                         <!-- Select job items start -->
                         <div class="select-job-items2">
-                            <select name="select">
-                                <option value="">All Category</option>
-                                <option value="">Category 1</option>
-                                <option value="">Category 2</option>
-                                <option value="">Category 3</option>
-                                <option value="">Category 4</option>
+                            <select name="select" id="category-dropdown">
+                                <option value="all">All Category</option>
+                                @foreach(var category in Model.Categories){
+                                    <option value="@category.Name">@category.Name</option>
+                                }
                             </select>
                         </div>
                         <!--  Select job items End-->
@@ -162,22 +161,14 @@
                             <div class="small-section-tittle2">
                                 <h4>Job Type</h4>
                             </div>
-                            <label class="container">Full Time
-                                <input type="checkbox" >
-                                <span class="checkmark"></span>
-                            </label>
-                            <label class="container">Part Time
-                                <input type="checkbox" checked="checked active">
-                                <span class="checkmark"></span>
-                            </label>
-                            <label class="container">Remote
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                            </label>
-                            <label class="container">Freelance
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                            </label>
+                            @foreach(var type in Enum.GetValues<Job.JobType>())
+                                {
+                                <label class="container">@type.GetDisplayName()
+                                    <input type="checkbox" >
+                                    <span class="checkmark"></span>
+                                </label>
+                                }
+                         
                         </div>
                         <!-- select-Categories End -->
                     </div>
@@ -304,85 +295,27 @@
                     </div>
                 </div>
                 <!-- single-job-content -->
-                <div class="single-job-items mb-30">
-                    <div class="job-items">
-                        <div class="company-img">
-                            <a href="job_details.html"><img src="~/img/icon/job-list1.png" alt=""></a>
+                @foreach(var job in Model.Jobs){
+                    <div class="single-job-items mb-30">
+                        <div class="job-items">
+                            <div class="company-img">
+                                <a href="job_details.html"><img src="~/img/icon/job-list1.png" alt="company logo of poster"></a>
+                            </div>
+                            <div class="job-tittle">
+                                <a href="job_details.html"><h4>@job.Title</h4></a>
+                                <ul>
+                                    <li>Company posting job</li>
+                                    <li><i class="fas fa-map-marker-alt"></i>@job.Location</li>
+                                    <li>@job.GetFormattedSalary</li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="job-tittle">
-                            <a href="job_details.html"><h4>Digital Marketer</h4></a>
-                            <ul>
-                                <li>Creative Agency</li>
-                                <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
-                                <li>$3500 - $4000</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="items-link f-right">
-                        <a href="job_details.html">Full Time</a>
-                        <span>7 hours ago</span>
-                    </div>
-                </div>
-                <!-- single-job-content -->
-                <div class="single-job-items mb-30">
-                    <div class="job-items">
-                        <div class="company-img">
-                            <a href="job_details.html"><img src="~/img/icon/job-list2.png" alt=""></a>
-                        </div>
-                        <div class="job-tittle">
-                            <a href="job_details.html"><h4>Digital Marketer</h4></a>
-                            <ul>
-                                <li>Creative Agency</li>
-                                <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
-                                <li>$3500 - $4000</li>
-                            </ul>
+                        <div class="items-link f-right">
+                            <a href="job_details.html">@job.Type.GetDisplayName()</a>
+                            <span>@job.GetHumanFriendlyCreatedDate</span>
                         </div>
                     </div>
-                    <div class="items-link f-right">
-                        <a href="job_details.html">Full Time</a>
-                        <span>7 hours ago</span>
-                    </div>
-                </div>
-                    <!-- single-job-content -->
-                <div class="single-job-items mb-30">
-                    <div class="job-items">
-                        <div class="company-img">
-                            <a href="job_details.html"><img src="~/img/icon/job-list3.png" alt=""></a>
-                        </div>
-                        <div class="job-tittle">
-                            <a href="job_details.html"><h4>Digital Marketer</h4></a>
-                            <ul>
-                                <li>Creative Agency</li>
-                                <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
-                                <li>$3500 - $4000</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="items-link f-right">
-                        <a href="job_details.html">Full Time</a>
-                        <span>7 hours ago</span>
-                    </div>
-                </div>
-                    <!-- single-job-content -->
-                <div class="single-job-items mb-30">
-                    <div class="job-items">
-                        <div class="company-img">
-                            <a href="job_details.html"><img src="~/img/icon/job-list4.png" alt=""></a>
-                        </div>
-                        <div class="job-tittle">
-                            <a href="job_details.html"><h4>Digital Marketer</h4></a>
-                            <ul>
-                                <li>Creative Agency</li>
-                                <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
-                                <li>$3500 - $4000</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="items-link f-right">
-                        <a href="job_details.html">Full Time</a>
-                        <span>7 hours ago</span>
-                    </div>
-                </div>
+                }
             </div>
         </div>
         <div class="row">
@@ -532,7 +465,6 @@
                                 <!-- Blog date -->
                                 <div class="blog-date text-center">
                                     <span>@post.CreatedOn.ToString("dd MMM")</span>
-                                    <p>@post.CreatedOn.ToString("yyyy")</p>
                                 </div>
                             </div>
                             <div class="blog-cap">
@@ -558,5 +490,19 @@
             elem.style.display = "block";
         });
     }   
+
+    document.getElementById("category-dropdown").onchange = async function(event){
+       var body =  await FilterJob({data:{category:event.target.value}});
+       console.log(body);
+    }
+
+    async function FilterJob({baseUrl ="https://localhost:5001/", data = {}}){
+        if(data.category != undefined && data.category != null){
+            var baseUrl = `${baseUrl}?category=${data.category}`
+        }
+            console.log(baseUrl);
+        const response = await fetch(baseUrl)
+        return response.text();
+    }
     </script>
 }

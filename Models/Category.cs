@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace job_portal.Models
 {
     public abstract class Category
@@ -9,6 +11,7 @@ namespace job_portal.Models
     }
     public class JobCategory : Category
     {
+        public List<Job> Jobs { get; set; }
 
     }
 

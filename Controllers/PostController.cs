@@ -16,7 +16,9 @@ namespace job_portal.Controllers
 
         public async Task<IActionResult> DetailAsync(int id)
         {
-            var post = await _context.Posts.FirstOrDefaultAsync(p => p.Id == id);
+            var post = await _context.Posts
+                .Include(p => p.Tags)
+                .FirstOrDefaultAsync(p => p.Id == id);
             if (post == null)
             {
                 return NotFound();

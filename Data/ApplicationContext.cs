@@ -19,6 +19,9 @@ namespace job_portal.Data
         public DbSet<Testimonial> Testimonials { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<Job> Jobs { get; set; }
+
+
 
 
 
@@ -57,6 +60,7 @@ namespace job_portal.Data
             });
 
             modelBuilder.ApplyConfiguration(new PostConfiguration());
+            modelBuilder.ApplyConfiguration(new JobConfiguration());
         }
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)

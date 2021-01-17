@@ -9,17 +9,8 @@
                 <a href="single-blog.html">
                     <h3>@post.Title.Truncate(25)</h3>
                 </a>
-                <p>@post.CreatedOn.ToString("MMMM dd, yyyy")</p>
+                <p>@post.GetHumanFriendlyCreatedDate</p>
             </div>
         </div>
     }
-    <div class="media post_item">
-        <img src="~/img/post/post_4.png" alt="post">
-        <div class="media-body">
-            <a href="single-blog.html">
-                <h3>Asteroids telescope</h3>
-            </a>
-            <p>01 Hours ago</p>
-        </div>
-    </div> 
 </aside>
