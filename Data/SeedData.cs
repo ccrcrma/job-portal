@@ -23,6 +23,7 @@ namespace job_portal.Data
             await SeedPostCategories();
             await seedTestimonialsAsync();
             await SeedPostsAsync();
+            await SeedTags();
         }
         public async Task SeedJobCategoriesAsync()
         {
@@ -105,6 +106,25 @@ namespace job_portal.Data
 
                 };
                 await _context.Posts.AddRangeAsync(posts);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task SeedTags()
+        {
+            if (await _context.Tags.CountAsync() == 0)
+            {
+                Tag[] tags = {
+                    new Tag{Name = "project"},
+                    new Tag{Name = "love"},
+                    new Tag{Name = "technology"},
+                    new Tag{Name = "travel"},
+                    new Tag{Name = "restaurant"},
+                    new Tag{Name = "lifestyle"},
+                    new Tag{Name = "design"},
+                    new Tag{Name = "illustration"},
+                };
+                await _context.Tags.AddRangeAsync(tags);
                 await _context.SaveChangesAsync();
             }
         }

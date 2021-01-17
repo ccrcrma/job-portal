@@ -18,6 +18,9 @@ namespace job_portal.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Testimonial> Testimonials { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -46,6 +49,13 @@ namespace job_portal.Data
                 testimonial.Property(t => t.Designation).IsRequired().HasMaxLength(100);
                 testimonial.Property(t => t.Description).IsRequired();
             });
+
+            modelBuilder.Entity<Tag>(tag =>
+            {
+                tag.ToTable("tag").HasKey(t => t.Id);
+                tag.Property(tag => tag.Name).IsRequired().HasMaxLength(100);
+            });
+
             modelBuilder.ApplyConfiguration(new PostConfiguration());
         }
 
