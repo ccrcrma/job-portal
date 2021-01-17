@@ -86,7 +86,7 @@
                         </div>
                         <div class="services-cap">
                             <h5><a href="job_listing.html">@category.Name</a></h5>
-                            <span>(@rnd.Next(0,25))</span>
+                            <span>(@category.Jobs.Count())</span>
                         </div>
                     </div>
                 </div>
@@ -161,14 +161,15 @@
                             <div class="small-section-tittle2">
                                 <h4>Job Type</h4>
                             </div>
-                            @foreach(var type in Enum.GetValues<Job.JobType>())
-                                {
-                                <label class="container">@type.GetDisplayName()
-                                    <input type="checkbox" >
-                                    <span class="checkmark"></span>
-                                </label>
-                                }
-                         
+                            <div id="job-type-checkbox-container">
+                                @foreach(var type in Enum.GetValues<Job.JobType>())
+                                    {
+                                    <label class="container">@type.GetDisplayName()
+                                        <input type="checkbox" value="@((int)type)">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    }
+                            </div>
                         </div>
                         <!-- select-Categories End -->
                     </div>
@@ -294,28 +295,32 @@
                         </div>
                     </div>
                 </div>
+
+                <div id="job-container">
                 <!-- single-job-content -->
-                @foreach(var job in Model.Jobs){
-                    <div class="single-job-items mb-30">
-                        <div class="job-items">
-                            <div class="company-img">
-                                <a href="job_details.html"><img src="~/img/icon/job-list1.png" alt="company logo of poster"></a>
+                    @foreach(var job in Model.Jobs){
+                        <div class="single-job-items mb-30">
+                            <div class="job-items">
+                                <div class="company-img">
+                                    <a href="job_details.html"><img src="~/img/icon/job-list1.png" alt="company logo of poster"></a>
+                                </div>
+                                <div class="job-tittle">
+                                    <a href="job_details.html"><h4>@job.Title</h4></a>
+                                    <ul>
+                                        <li>Company posting job</li>
+                                        <li><i class="fas fa-map-marker-alt"></i>@job.Location</li>
+                                        <li>@job.GetFormattedSalary</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div class="job-tittle">
-                                <a href="job_details.html"><h4>@job.Title</h4></a>
-                                <ul>
-                                    <li>Company posting job</li>
-                                    <li><i class="fas fa-map-marker-alt"></i>@job.Location</li>
-                                    <li>@job.GetFormattedSalary</li>
-                                </ul>
+                            <div class="items-link f-right">
+                                <a href="job_details.html">@job.Type.GetDisplayName()</a>
+                                <span>@job.GetHumanFriendlyCreatedDate</span>
                             </div>
                         </div>
-                        <div class="items-link f-right">
-                            <a href="job_details.html">@job.Type.GetDisplayName()</a>
-                            <span>@job.GetHumanFriendlyCreatedDate</span>
-                        </div>
-                    </div>
-                }
+                    }
+                </div>
+                
             </div>
         </div>
         <div class="row">
@@ -491,16 +496,27 @@
         });
     }   
 
+    Object.values(document.querySelectorAll("#job-type-checkbox-container input")).forEach(function(elem){
+        elem.onchange = function(event){
+            console.log(event.target.value);
+        }
+    });
+
     document.getElementById("category-dropdown").onchange = async function(event){
-       var body =  await FilterJob({data:{category:event.target.value}});
-       console.log(body);
+       var selectedCategory = event.target.value;
+       selectedCategory = encodeURI(selectedCategory);
+       selectedCategory = selectedCategory.replace("&", "%26"); 
+       var body =  await FilterJob({data:{category:selectedCategory}});
+       document.getElementById("job-container").innerHTML = body;
+       window.history.pushState("", "", `?category=${selectedCategory}`);
+
     }
 
-    async function FilterJob({baseUrl ="https://localhost:5001/", data = {}}){
+    async function FilterJob({baseUrl ="https://localhost:5001/home/jobfilters", data = {}}){
+
         if(data.category != undefined && data.category != null){
             var baseUrl = `${baseUrl}?category=${data.category}`
         }
-            console.log(baseUrl);
         const response = await fetch(baseUrl)
         return response.text();
     }

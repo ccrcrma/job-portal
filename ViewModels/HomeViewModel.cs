@@ -6,7 +6,7 @@ namespace job_portal.ViewModels
 {
     public class HomeViewModel
     {
-        public IEnumerable<Category> Categories { get; set; }
+        public List<JobCategory> Categories { get; set; }
         public List<Job> Jobs { get; set; }
 
         public List<Testimonial> Testimonials { get; set; }

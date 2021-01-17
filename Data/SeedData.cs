@@ -30,7 +30,7 @@ namespace job_portal.Data
 
         private async Task SeedJobs()
         {
-            if (await _context.Jobs.CountAsync() == 0)
+            if (await _context.Jobs.CountAsync() <= 0)
             {
                 Job[] jobs =
                 {
@@ -47,6 +47,27 @@ namespace job_portal.Data
                         Location = "Florida, US",
                         Salary = "60000-130000",
                         Type = Job.JobType.FullTime
+                    },
+                    new Job
+                    {
+                        Title = "FullStack Developer",
+                        Location = "Florida, US",
+                        Salary = "60000-130000",
+                        Type = Job.JobType.PartTime
+                    },
+                    new Job
+                    {
+                        Title = "FullStack Developer",
+                        Location = "Florida, US",
+                        Salary = "60000-130000",
+                        Type = Job.JobType.Remote
+                    },
+                    new Job
+                    {
+                        Title = "FullStack Developer",
+                        Location = "Florida, US",
+                        Salary = "60000-130000",
+                        Type = Job.JobType.Freelance
                     }
                 };
                 await _context.Jobs.AddRangeAsync(jobs);

@@ -9,6 +9,7 @@ using job_portal.Models;
 using job_portal.Data;
 using Microsoft.EntityFrameworkCore;
 using job_portal.ViewModels;
+using static job_portal.Models.Job;
 
 namespace job_portal.Controllers
 {
@@ -33,26 +34,45 @@ namespace job_portal.Controllers
             return View();
         }
 
-        public async Task<IActionResult> HomeAsync(string category)
+        public async Task<IActionResult> HomeAsync(string category, JobType? job_type)
         {
             var jobs = _context.Jobs.Include(j => j.Category).AsQueryable();
-            if (category != null)
+            if (job_type != null)
+                jobs = jobs.Where(j => j.Type == job_type);
+            if (category != null && category.ToLower()!="all")
             {
                 category = category.ToLower();
-                var selectedCategory = await _context.Set<JobCategory>().FirstOrDefaultAsync(c => c.Name.ToLower() == category);
-                if (selectedCategory != null)
-                    jobs = jobs.Where(j => j.Category.Name.ToLower().Equals(category));
+                ViewBag.Category = category;
+                jobs = jobs.Where(j => j.Category.Name.ToLower().Equals(category));
 
             }
             List<Job> jobLists;
             jobLists = jobs.ToList();
 
-            var categories = await _context.Set<JobCategory>().ToListAsync();
+            var categories = await _context.Set<JobCategory>().Include(jc => jc.Jobs).ToListAsync();
             var testimonials = await _context.Testimonials.ToListAsync();
             var blogPosts = await _context.Posts.ToListAsync();
 
             var vm = new HomeViewModel { Jobs = jobLists, Categories = categories, Testimonials = testimonials, Posts = blogPosts };
             return View(vm);
+        }
+
+        public async Task<ActionResult> JobFilters([FromQuery] string category)
+        {
+            _logger.LogInformation(category);
+            _logger.LogInformation(this.Request.QueryString.ToString());
+            var jobs = _context.Jobs.Include(j => j.Category).AsQueryable();
+            if (category != null && !category.ToLower().Equals("all"))
+            {
+                category = category.ToLower();
+
+                ViewBag.Category = category;
+                jobs = jobs.Where(j => j.Category.Name.ToLower().Equals(category));
+
+            }
+            List<Job> jobLists;
+            jobLists = jobs.ToList();
+            return PartialView("_JobFilters", jobLists);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
