@@ -34,12 +34,14 @@ namespace job_portal.Controllers
             return View();
         }
 
-        public async Task<IActionResult> HomeAsync(string category, JobType? job_type)
+        public async Task<IActionResult> HomeAsync([Bind(Prefix = "Filter")] SearchFilterViewModel searchFilter)
         {
+            var category = searchFilter.Category;
+
             var jobs = _context.Jobs.Include(j => j.Category).AsQueryable();
-            if (job_type != null)
-                jobs = jobs.Where(j => j.Type == job_type);
-            if (category != null && category.ToLower()!="all")
+            // if (job_type != null)
+            // jobs = jobs.Where(j => j.Type == job_type);
+            if (category != null && category.ToLower() != "all")
             {
                 category = category.ToLower();
                 ViewBag.Category = category;
@@ -57,22 +59,36 @@ namespace job_portal.Controllers
             return View(vm);
         }
 
-        public async Task<ActionResult> JobFilters([FromQuery] string category)
+        public async Task<ActionResult> JobFilters([Bind(Prefix = "Filter")] SearchFilterViewModel searchFilterViewModel)
         {
+            var category = searchFilterViewModel.Category;
             _logger.LogInformation(category);
             _logger.LogInformation(this.Request.QueryString.ToString());
             var jobs = _context.Jobs.Include(j => j.Category).AsQueryable();
             if (category != null && !category.ToLower().Equals("all"))
             {
                 category = category.ToLower();
-
                 ViewBag.Category = category;
                 jobs = jobs.Where(j => j.Category.Name.ToLower().Equals(category));
 
             }
+            var jobTypes = searchFilterViewModel.Type;
+            if (jobTypes != null && jobTypes.Count > 0)
+            {
+                var selectedCategories = jobTypes.Where(j => j.Selected == true);
+                foreach (var selectedcategory in selectedCategories)
+                {
+                    jobs = jobs.Where(j => j.Type == selectedcategory.Value);
+
+                }
+
+            }
+
+
             List<Job> jobLists;
             jobLists = jobs.ToList();
             return PartialView("_JobFilters", jobLists);
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -82,3 +98,4 @@ namespace job_portal.Controllers
         }
     }
 }
+
