@@ -198,22 +198,17 @@
                                 <div class="small-section-tittle2">
                                     <h4>Experience</h4>
                                 </div>
-                                <label class="container">1-2 Years
-                                    <input type="checkbox" >
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container">2-3 Years
-                                    <input type="checkbox" checked="checked active">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container">3-6 Years
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container">6-more..
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
+                                <div id="experience-checkbox-container">
+
+                                @for(int i=0;i < Model.Filter.Experience.Count(); i++){
+                                    <label class="container">@Model.Filter.Experience[i].Text
+                                        <input asp-for="@Model.Filter.Experience[i].Selected" >
+                                        <input type="hidden"  asp-for="@Model.Filter.Experience[i].Value">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                }
+                                </div>
+
                             </div>
                             <!-- select-Categories End -->
                         </div>
@@ -224,30 +219,16 @@
                                 <div class="small-section-tittle2">
                                     <h4>Posted Within</h4>
                                 </div>
-                                <label class="container">Any
-                                    <input type="checkbox" >
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container">Today
-                                    <input type="checkbox" checked="checked active">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container">Last 2 days
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container">Last 3 days
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container">Last 5 days
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container">Last 10 days
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
+                                <div id="posted-duration-checkbox-container">
+                                    @for(int i=0;i <Model.Filter.PostedWithin.Count();i++){
+                                        <label class="container">@Model.Filter.PostedWithin[i].Text
+                                            <input asp-for="Filter.PostedWithin[i].Selected" >
+                                            <input type="hidden" asp-for="Filter.PostedWithin[i].Value" >
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    }
+
+                                </div>
                             </div>
                             <!-- select-Categories End -->
                         </div>
@@ -505,6 +486,21 @@
 
     Object.values(document.querySelectorAll("#job-type-checkbox-container input")).forEach(function(elem){
         elem.onchange = async function(event){
+            await FetchAndUpdate();
+        }
+    });
+
+
+    Object.values(document.querySelectorAll("#experience-checkbox-container input")).forEach(function(elem){
+        elem.onchange = async function(event){
+            console.log(elem);
+            await FetchAndUpdate();
+        }
+    });
+
+    Object.values(document.querySelectorAll("#posted-duration-checkbox-container input")).forEach(function(elem){
+        elem.onchange = async function(event){
+            console.log(elem);
             await FetchAndUpdate();
         }
     });

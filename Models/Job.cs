@@ -33,8 +33,9 @@ namespace job_portal.Models
             }
         }
         public JobType Type { get; set; }
-
         public JobCategory Category { get; set; }
+
+        public int ExperienceRequired { get; set; }
 
     }
 }

@@ -14,6 +14,7 @@ namespace job_portal.EFConfigurations
             builder.Property(j => j.Location).HasMaxLength(100).IsRequired();
             builder.Property(j => j.Salary).IsRequired().HasDefaultValue("Negotiable").HasMaxLength(20);
             builder.Property(j => j.Type).IsRequired().HasColumnType("tinyint");
+            builder.Property(j => j.ExperienceRequired).HasColumnType("tinyint").HasDefaultValue(2);
 
             builder.HasOne<JobCategory>(j => j.Category)
                 .WithMany(jc => jc.Jobs)

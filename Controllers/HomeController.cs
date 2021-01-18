@@ -10,6 +10,8 @@ using job_portal.Data;
 using Microsoft.EntityFrameworkCore;
 using job_portal.ViewModels;
 using static job_portal.Models.Job;
+using job_portal.Util;
+using static job_portal.ViewModels.SearchFilterViewModel;
 
 namespace job_portal.Controllers
 {
@@ -73,17 +75,28 @@ namespace job_portal.Controllers
 
             }
             var jobTypes = searchFilterViewModel.Type;
-            if (jobTypes != null && jobTypes.Count > 0)
+            var selectedCategories = jobTypes.Where(j => j.Selected == true).Select(j => j.Value).ToList();
+            if (selectedCategories.Count > 0)
             {
-                var selectedCategories = jobTypes.Where(j => j.Selected == true);
-                foreach (var selectedcategory in selectedCategories)
-                {
-                    jobs = jobs.Where(j => j.Type == selectedcategory.Value);
-
-                }
-
+                jobs = jobs.Where(j => selectedCategories.Contains(j.Type));
             }
 
+            var experienceRequired = searchFilterViewModel.Experience;
+            var experienceLevels = experienceRequired.Where(e => e.Selected == true).Select(j => j.Value).ToArray();
+            if (experienceLevels.Length > 0)
+            {
+                var (min, max) = ExperienceLevelInfoHelper.GetNumberOfYears(experienceLevels);
+                jobs = jobs.Where(j => j.ExperienceRequired >= min && j.ExperienceRequired <= max);
+            }
+
+            var postedDuration = searchFilterViewModel.PostedWithin.Where(d => d.Selected == true).Select(d => d.Value).ToArray();
+            if (postedDuration.Length > 0)
+            {
+                if (PostDurationHelper.ApplyDurationFilter(postedDuration, out int days))
+                {
+                    jobs = jobs.Where(j => j.CreatedOn.AddDays(days).Day >= DateTime.UtcNow.Day);
+                }
+            }
 
             List<Job> jobLists;
             jobLists = jobs.ToList();

@@ -14,7 +14,7 @@ namespace job_portal.Models
         {
             get
             {
-                var numberOfDays = (DateTime.UtcNow - CreatedOn).Days;
+                var numberOfDays = (DateTime.UtcNow.Day - CreatedOn.Day);
                 if (numberOfDays > 30)
                 {
                     return CreatedOn.ToString("MMMM dd, yyyy");
