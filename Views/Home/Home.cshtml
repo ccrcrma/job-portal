@@ -25,7 +25,7 @@
     }
 }
 
-<!-- slider Area Start-->
+<!-- Area Start-->
 <div class="slider-area ">
     <!-- Mobile Menu -->
     <div class="slider-active">
@@ -244,13 +244,17 @@
                                         <input type="text" class="js-range-slider" value="" />
                                         <div class="d-flex align-items-center">
                                             <div class="price_text">
-                                                <p>Price :</p>
+                                                <p>$(10K):</p>
                                             </div>
                                             <div class="price_value d-flex justify-content-center">
-                                                <input type="text" class="js-input-from" id="amount" readonly />
+                                                <input class="js-input-from"  id="min-amount" readonly/>
                                                 <span>to</span>
-                                                <input type="text" class="js-input-to" id="amount" readonly />
+                                                <input class="js-input-to" id="max-amount" readonly/>
                                             </div>
+                                                <input type="hidden" id="salary-max" asp-for="Filter.MaxSalary">
+                                                <input type="hidden" id="salary-min" asp-for="Filter.MinSalary">
+                                                <input type="hidden" id="slider-change-fetch-trigger">
+                                           
                                         </div>
                                     </div>
                                 </div>
@@ -264,27 +268,25 @@
             </div>
             <!-- Right content -->
             <div class="col-xl-9 col-md-8">
-                <div class="row show-more">
-                    <div class="col-lg-12">
-                        <div class="count-job mb-35 d-flex">
-                            <span class="mr-auto">39, 782 Jobs found</span>
-                            <!-- Select job items start -->
-                            <div class="select-job-items d-flex">
-                                <span>Sort by</span>
-                                <select name="select" class="sort-select">
-                                    <option value="">None</option>
-                                    <option value="">job list</option>
-                                    <option value="">job list</option>
-                                    <option value="">job list</option>
-                                </select>
+                <div id="job-container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="count-job mb-35 d-flex">
+                                <span class="mr-auto">@Model.Jobs.Count() Jobs found</span>
+                                <!-- Select job items start -->
+                                <div class="select-job-items d-flex">
+                                    <span>Sort by</span>
+                                    <select name="select" class="sort-select">
+                                        <option value="">None</option>
+                                        <option value="">job list</option>
+                                        <option value="">job list</option>
+                                        <option value="">job list</option>
+                                    </select>
+                                </div>
+                                <!--  Select job items End-->
                             </div>
-                            <!--  Select job items End-->
                         </div>
                     </div>
-                </div>
-
-                <div id="job-container">
-                <!-- single-job-content -->
                     @foreach(var job in Model.Jobs){
                         <div class="single-job-items mb-30">
                             <div class="job-items">
@@ -292,7 +294,7 @@
                                     <a href="job_details.html"><img src="~/img/icon/job-list1.png" alt="company logo of poster"></a>
                                 </div>
                                 <div class="job-tittle">
-                                    <a href="job_details.html"><h4>@job.Title</h4></a>
+                                    <a asp-action="Detail" asp-controller="Job" asp-route-id="@job.Id"><h4>@job.Title</h4></a>
                                     <ul>
                                         <li>Company posting job</li>
                                         <li><i class="fas fa-map-marker-alt"></i>@job.Location</li>
@@ -301,8 +303,8 @@
                                 </div>
                             </div>
                             <div class="items-link f-right">
-                                <a href="job_details.html">@job.Type.GetDisplayName()</a>
-                                <span>@job.GetHumanFriendlyCreatedDate</span>
+                                <a asp-action="Detail" asp-controller="Job" asp-route-id="@job.Id">@job.Type.GetDisplayName()</a>
+                                <span>@job.CreatedOn.GetHumanFriendlyDate()</span>
                             </div>
                         </div>
                     }
@@ -490,20 +492,28 @@
         }
     });
 
+    document.querySelector(".js-input-from")
+
 
     Object.values(document.querySelectorAll("#experience-checkbox-container input")).forEach(function(elem){
         elem.onchange = async function(event){
-            console.log(elem);
             await FetchAndUpdate();
+                console.log(document.getElementById("min-amount").value);
+                console.log(document.getElementById("max-amount").value);
         }
     });
 
     Object.values(document.querySelectorAll("#posted-duration-checkbox-container input")).forEach(function(elem){
         elem.onchange = async function(event){
-            console.log(elem);
             await FetchAndUpdate();
         }
     });
+
+        document.getElementById("slider-change-fetch-trigger").onchange = async function(event)
+        {
+            console.log("slider change occured");
+            await FetchAndUpdate();
+        }
 
 
     function ArrayToObject(data){

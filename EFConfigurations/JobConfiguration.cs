@@ -12,8 +12,12 @@ namespace job_portal.EFConfigurations
             builder.ToTable("job").HasKey(j => j.Id);
             builder.Property(j => j.Title).IsRequired().HasMaxLength(200);
             builder.Property(j => j.Location).HasMaxLength(100).IsRequired();
-            builder.Property(j => j.Salary).IsRequired().HasDefaultValue("Negotiable").HasMaxLength(20);
+            builder.Property(j => j.SalaryMin).HasColumnType("decimal(13,4)");
+            builder.Property(j => j.SalaryMax).HasColumnType("decimal(13,4)");
             builder.Property(j => j.Type).IsRequired().HasColumnType("tinyint");
+            builder.Property(j => j.Vacancy).IsRequired();
+            builder.Property(j => j.Description).IsRequired();
+            builder.Property(j => j.Deadline).IsRequired().HasColumnType("date");
             builder.Property(j => j.ExperienceRequired).HasColumnType("tinyint").HasDefaultValue(2);
 
             builder.HasOne<JobCategory>(j => j.Category)

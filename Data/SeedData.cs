@@ -38,36 +38,69 @@ namespace job_portal.Data
                     {
                         Title = "Digital Marketer",
                         Location = "Athens,Greece",
-                        Salary = "3500-4000",
-                        Type = Job.JobType.FullTime
+                        Type = Job.JobType.FullTime,
+                        Vacancy = 2,
+                        Deadline = DateTime.UtcNow.AddDays(30),
+                        Description = @"It is a long established fact that a reader will beff distracted by vbthe creadable content
+                            of a page when looking at its layout. The pointf of using Lorem Ipsum is that it has ahf
+                            mcore or-lgess normal distribution of letters, as opposed to using, Content here content
+                            here making it look like readable."
                     },
                     new Job
                     {
                         Title = "FullStack Developer",
                         Location = "Florida, US",
-                        Salary = "60000-130000",
-                        Type = Job.JobType.FullTime
+                        SalaryMin = 60000,
+                        SalaryMax =130000,
+                        Type = Job.JobType.FullTime,
+                        Vacancy = 5,
+                        Deadline = DateTime.UtcNow.AddDays(90),
+                        Description = @"It is a long established fact that a reader will beff distracted by vbthe creadable content
+                            of a page when looking at its layout. The pointf of using Lorem Ipsum is that it has ahf
+                            mcore or-lgess normal distribution of letters, as opposed to using, Content here content
+                            here making it look like readable."
+
                     },
                     new Job
                     {
-                        Title = "FullStack Developer",
+                        Title = "Primary School Teacher",
                         Location = "Florida, US",
-                        Salary = "60000-130000",
-                        Type = Job.JobType.PartTime
+                        SalaryMin = 20000,
+                        Type = Job.JobType.PartTime,
+                        Vacancy = 3,
+                        Deadline = DateTime.UtcNow.AddDays(20),
+                        Description = @"It is a long established fact that a reader will beff distracted by vbthe creadable content
+                            of a page when looking at its layout. The pointf of using Lorem Ipsum is that it has ahf
+                            mcore or-lgess normal distribution of letters, as opposed to using, Content here content
+                            here making it look like readable."
                     },
                     new Job
                     {
-                        Title = "FullStack Developer",
+                        Title = "Language Translator",
                         Location = "Florida, US",
-                        Salary = "60000-130000",
-                        Type = Job.JobType.Remote
+                        SalaryMin = 89000,
+                        SalaryMax = 2000000,
+                        Type = Job.JobType.Remote,
+                        Vacancy = 3,
+                        Deadline = DateTime.UtcNow.AddDays(17),
+                        Description = @"It is a long established fact that a reader will beff distracted by vbthe creadable content
+                            of a page when looking at its layout. The pointf of using Lorem Ipsum is that it has ahf
+                            mcore or-lgess normal distribution of letters, as opposed to using, Content here content
+                            here making it look like readable."
                     },
                     new Job
                     {
-                        Title = "FullStack Developer",
+                        Title = " Investement Banker",
                         Location = "Florida, US",
-                        Salary = "60000-130000",
-                        Type = Job.JobType.Freelance
+                        SalaryMin = 250000,
+                        SalaryMax = 400000,
+                        Type = Job.JobType.Freelance,
+                        Vacancy = 4,
+                        Deadline = DateTime.UtcNow.AddDays(25),
+                        Description = @"It is a long established fact that a reader will beff distracted by vbthe creadable content
+                            of a page when looking at its layout. The pointf of using Lorem Ipsum is that it has ahf
+                            mcore or-lgess normal distribution of letters, as opposed to using, Content here content
+                            here making it look like readable."
                     }
                 };
                 await _context.Jobs.AddRangeAsync(jobs);

@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace job_portal.Models
@@ -17,24 +18,24 @@ namespace job_portal.Models
         }
         public string Title { get; set; }
         public string Location { get; set; }
-        public string Salary { get; set; }
-
+        public decimal? SalaryMin { get; set; }
+        public decimal? SalaryMax { get; set; }
         public string GetFormattedSalary
         {
             get
             {
-                if (Salary == "Negotiable") return Salary;
-                string FormattedSalary = "$" + Salary;
-                if (FormattedSalary.Contains("-"))
-                {
-                    FormattedSalary = FormattedSalary.Insert(FormattedSalary.IndexOf("-") + 1, "$");
-                }
+                if (SalaryMin == null) return "Negotiable";
+                string FormattedSalary = $"${Math.Round(SalaryMin.GetValueOrDefault())}";
+                if (SalaryMax != null)
+                    FormattedSalary = FormattedSalary + $"-${Math.Round(SalaryMax.GetValueOrDefault())}";
                 return FormattedSalary;
             }
         }
         public JobType Type { get; set; }
         public JobCategory Category { get; set; }
-
+        public string Description { get; set; }
+        public int Vacancy { get; set; }
+        public DateTime Deadline { get; set; }
         public int ExperienceRequired { get; set; }
 
     }

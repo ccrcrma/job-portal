@@ -30,6 +30,7 @@
         doAnimations($firstAnimatingElements);
       });
       BasicSlider.on('beforeChange', function (e, slick, currentSlide, nextSlide) {
+        console.log(currentSlide, nextSlide);
         var $animatingElements = $('.single-slider[data-slick-index="' + nextSlide + '"]').find('[data-animation]');
         doAnimations($animatingElements);
       });

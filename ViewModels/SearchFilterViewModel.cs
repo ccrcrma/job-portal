@@ -39,6 +39,10 @@ namespace job_portal.ViewModels
         }
         public string Category { get; set; }
 
+        public int? MinSalary { get; set; }
+        public int? MaxSalary { get; set; }
+        
+
         public List<Checkbox<JobType>> Type { get; set; } = new List<Checkbox<JobType>>
         {
             new Checkbox<JobType>
@@ -82,7 +86,6 @@ namespace job_portal.ViewModels
                 Value= ExperienceLevel.D,
             },
         };
-
 
         public List<Checkbox<PostedDuration>> PostedWithin { get; set; } = new List<Checkbox<PostedDuration>>
         {

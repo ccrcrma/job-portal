@@ -9,7 +9,7 @@
                 <a href="single-blog.html">
                     <h3>@post.Title.Truncate(25)</h3>
                 </a>
-                <p>@post.GetHumanFriendlyCreatedDate</p>
+                <p>@post.CreatedOn.GetHumanFriendlyDate()</p>
             </div>
         </div>
     }

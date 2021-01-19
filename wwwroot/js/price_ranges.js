@@ -2378,24 +2378,25 @@ var $range = $(".js-range-slider"),
     $inputTo = $(".js-input-to"),
     instance,
     min = 0,
-    max = 1000,
-    from = 10,
-    to = 100;
+    max = 50,
+    from = 0,
+    to = 50;
 
 $range.ionRangeSlider({
     type: "double",
     min: min,
     max: max,
     from: 0,
-    to: 500,
-  prefix: 'tk. ',
+    to: 50,
+    prefix: 'tk. ',
     onStart: updateInputs,
     onChange: updateInputs,
+    onFinish:updateInputsAndSetFilter,
     step: 1,
     prettify_enabled: true,
     prettify_separator: ".",
-  values_separator: " - ",
-  force_edges: true
+    values_separator: " - ",
+    force_edges: true
   
 
 });
@@ -2405,14 +2406,24 @@ instance = $range.data("ionRangeSlider");
 function updateInputs (data) {
     from = data.from;
     to = data.to;
-    
     $inputFrom.prop("value", from);
     $inputTo.prop("value", to); 
 }
 
+function updateInputsAndSetFilter(data){
+    updateInputs(data);
+    var maxSalary = document.getElementById("salary-max");
+    maxSalary.value = data.to;
+    var minSalary =document.getElementById("salary-min");
+    minSalary.value= data.from
+    var trigger  = document.getElementById("slider-change-fetch-trigger");
+    trigger.onchange();
+
+}
+
 $inputFrom.on("input", function () {
     var val = $(this).prop("value");
-    
+    console.log(val);
     // validate
     if (val < min) {
         val = min;
@@ -2423,6 +2434,7 @@ $inputFrom.on("input", function () {
     instance.update({
         from: val
     });
+    console.log(instance);
 });
 
 $inputTo.on("input", function () {
@@ -2438,6 +2450,7 @@ $inputTo.on("input", function () {
     instance.update({
         to: val
     });
+    console.log(instance);
 });
 
     });

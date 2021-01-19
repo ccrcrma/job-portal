@@ -38,34 +38,23 @@ namespace job_portal.Controllers
 
         public async Task<IActionResult> HomeAsync([Bind(Prefix = "Filter")] SearchFilterViewModel searchFilter)
         {
-            var category = searchFilter.Category;
-
-            var jobs = _context.Jobs.Include(j => j.Category).AsQueryable();
-            // if (job_type != null)
-            // jobs = jobs.Where(j => j.Type == job_type);
-            if (category != null && category.ToLower() != "all")
-            {
-                category = category.ToLower();
-                ViewBag.Category = category;
-                jobs = jobs.Where(j => j.Category.Name.ToLower().Equals(category));
-
-            }
-            List<Job> jobLists;
-            jobLists = jobs.ToList();
-
+            var filteredJobs= await GetFilteredJobs(searchFilter);
             var categories = await _context.Set<JobCategory>().Include(jc => jc.Jobs).ToListAsync();
             var testimonials = await _context.Testimonials.ToListAsync();
             var blogPosts = await _context.Posts.ToListAsync();
-
-            var vm = new HomeViewModel { Jobs = jobLists, Categories = categories, Testimonials = testimonials, Posts = blogPosts };
+            var vm = new HomeViewModel { Jobs = filteredJobs, Categories = categories, Testimonials = testimonials, Posts = blogPosts };
             return View(vm);
         }
 
         public async Task<ActionResult> JobFilters([Bind(Prefix = "Filter")] SearchFilterViewModel searchFilterViewModel)
         {
+            var jobLists = await GetFilteredJobs(searchFilterViewModel);
+            return PartialView("_JobFilters", jobLists);
+        }
+
+        private async Task<List<Job>> GetFilteredJobs(SearchFilterViewModel searchFilterViewModel)
+        {
             var category = searchFilterViewModel.Category;
-            _logger.LogInformation(category);
-            _logger.LogInformation(this.Request.QueryString.ToString());
             var jobs = _context.Jobs.Include(j => j.Category).AsQueryable();
             if (category != null && !category.ToLower().Equals("all"))
             {
@@ -98,9 +87,17 @@ namespace job_portal.Controllers
                 }
             }
 
-            List<Job> jobLists;
-            jobLists = jobs.ToList();
-            return PartialView("_JobFilters", jobLists);
+            if (searchFilterViewModel.MinSalary != null)
+            {
+                var minAmount = searchFilterViewModel.MinSalary * 10000;
+                jobs = jobs.Where(j => j.SalaryMin >= minAmount);
+            }
+            if (searchFilterViewModel.MaxSalary != null)
+            {
+                var maxAmount = searchFilterViewModel.MaxSalary * 10000;
+                jobs = jobs.Where(j => j.SalaryMin <= maxAmount);
+            }
+            return await jobs.ToListAsync();
 
         }
 

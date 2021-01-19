@@ -1,13 +1,31 @@
 @model List<Job>
 @if(Model.Count >0){
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="count-job mb-35 d-flex">
+                <span class="mr-auto">@Model.Count() Jobs found</span>
+                <!-- Select job items start -->
+                <div class="select-job-items d-flex">
+                    <span>Sort by</span>
+                    <select name="select" class="sort-select">
+                        <option value="">None</option>
+                        <option value="">job list</option>
+                        <option value="">job list</option>
+                        <option value="">job list</option>
+                    </select>
+                </div>
+                <!--  Select job items End-->
+            </div>
+        </div>
+    </div>
     @foreach(var job in Model){
         <div class="single-job-items mb-30">
             <div class="job-items">
                 <div class="company-img">
-                    <a href="job_details.html"><img src="~/img/icon/job-list1.png" alt="company logo of poster"></a>
+                    <a asp-action="Detail" asp-controller="Job" asp-route-id="@job.Id"><img src="~/img/icon/job-list1.png" alt="company logo of poster"></a>
                 </div>
                 <div class="job-tittle">
-                    <a href="job_details.html"><h4>@job.Title</h4></a>
+                    <a asp-action="Detail" asp-controller="Job" asp-route-id="@job.Id"><h4>@job.Title</h4></a>
                     <ul>
                         <li>Company posting job</li>
                         <li><i class="fas fa-map-marker-alt"></i>@job.Location</li>
@@ -16,8 +34,8 @@
                 </div>
             </div>
             <div class="items-link f-right">
-                <a href="job_details.html">@job.Type.GetDisplayName()</a>
-                <span>@job.GetHumanFriendlyCreatedDate</span>
+                <a asp-action="Detail" asp-controller="Job" asp-route-id="@job.Id">@job.Type.GetDisplayName()</a>
+                <span>@job.CreatedOn.GetHumanFriendlyDate()</span>
             </div>
         </div>
     }
