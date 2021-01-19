@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using job_portal.Data;
+using job_portal.Services;
+using job_portal.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -42,6 +44,9 @@ namespace job_portal
                     .EnableDetailedErrors()
 
             );
+
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddSingleton<IMailService, MailService>();
             Task.Run(() => new SeedData(services.BuildServiceProvider()).SeedAll());
         }
 

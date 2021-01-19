@@ -1,0 +1,67 @@
+@model JobLinkViewModel
+<div class="modal fade" id="email-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Send job to your friend</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-action="MailLinkToFriend" asp-controller="Mail" id="job-link-form">
+                <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                <div class="modal-body px-2">
+                    <div class="mb-3">
+                        <label asp-for="SenderName" class="form-label"></label>
+                        <input asp-for="SenderName" class="form-control">
+                        <span class="text-danger" asp-validation-for="SenderName"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="SenderEmail" class="form-label"></label>
+                        <input asp-for="SenderEmail" class="form-control">
+                        <span class="text-danger" asp-validation-for="SenderEmail"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ReceiverName" class="form-label"></label>
+                        <input asp-for="ReceiverName" class="form-control">
+                        <span class="text-danger" asp-validation-for="ReceiverName"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ReceiverEmail" class="form-label"></label>
+                        <input asp-for="ReceiverEmail" class="form-control">
+                        <span class="text-danger" asp-validation-for="ReceiverEmail"></span>
+                    </div>
+                    <input type="hidden" asp-for="LinkUrl">
+                    <input type="hidden" asp-for="Title">
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="submit" class="btn btn-sm bg-success">Send</button>
+                    <button data-dismiss="modal" class="btn btn-sm bg-danger">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginScripts())
+{
+    <partial name="_ValidationScriptsPartial"></partial>
+    <script>
+    @* var form = document.getElementById("job-link-form")
+            form.onsubmit = function(event){
+            event.preventDefault();
+            var formData = new FormData(this);
+            console.log(formData)
+            console.log("form submit attempted ");
+            } *@
+        document.querySelector('form').addEventListener('submit', (e) => {
+            const formData = new FormData(e.target);
+            for(const item of formData.entries()){
+                console.log(item)
+            }
+            @* // Don't forget  *@
+            e.preventDefault();
+            // Now you can use formData.get('foo'), for example.
+        });
+</script>
+}

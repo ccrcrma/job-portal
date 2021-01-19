@@ -1,7 +1,11 @@
 @model Job
 @{
     ViewBag.Title = "Detail";
+    var partialVm = new JobLinkViewModel();
+    partialVm.Title = Model.Title;
+    partialVm.LinkUrl = Context.Request.Path;
 }
+@await Html.PartialAsync("_MailModalPartial", partialVm)
 <!-- job post company Start -->
 <div class="job-post-company pt-120 pb-120">
     <div class="container">
@@ -31,8 +35,9 @@
                 <div class="job-post-details">
                     <div class="post-details1 mb-50">
                         <!-- Small Section Tittle -->
-                        <div class="small-section-tittle">
+                        <div class="small-section-tittle d-flex vertical-align-middle">
                             <h4>Job Description</h4>
+                            <a data-toggle="modal" data-target="#email-modal" class="d-block ml-auto"><i class="fas fa-envelope text-success" style="font-size: 1.5rem;"></i></a>
                         </div>
                         <p>@Model.Description</p>
                     </div>
