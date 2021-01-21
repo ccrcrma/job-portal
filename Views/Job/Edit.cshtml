@@ -1,12 +1,12 @@
 @model JobViewModel
 @using static job_portal.Models.Job
 @{
-    ViewBag.Title ="Create job";
+    ViewBag.Title ="Edit job";
 }
 
 <div class="container mt-5">
-    <h2 class="text-center">Create  a new Job</h2>
-    <form asp-action="Create" asp-controller="Job" class="mb-5">
+    <h2 class="text-center">Edit  a new Job</h2>
+    <form asp-action="Edit" asp-controller="Job" class="mb-5">
         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
         <div class="mb-3">
             <label asp-for="Title" class="form-label"></label>
@@ -64,7 +64,7 @@
             <input asp-for="ExperienceRequired" class="form-control">
             <span class="text-danger" asp-validation-for="ExperienceRequired"></span>
         </div>
-        <button type="submit" class="btn bg-primary">Create</button>
+        <button type="submit" class="btn bg-primary">Edit</button>
     </form>
 </div>
 

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using job_portal.ViewModels;
 
 namespace job_portal.Models
 {
@@ -38,5 +39,20 @@ namespace job_portal.Models
         public DateTime Deadline { get; set; }
         public int ExperienceRequired { get; set; }
 
+        public JobViewModel ToViewModel()
+        {
+            return new JobViewModel
+            {
+                Title = Title,
+                Description = Description,
+                Id = Id,
+                Category = Category.Id,
+                Type = Type,
+                Vacancy = Vacancy,
+                Deadline = Deadline,
+                Location = Location,
+                ExperienceRequired = ExperienceRequired
+            };
+        }
     }
 }

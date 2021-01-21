@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using job_portal.Models;
 using job_portal.ValidationAttributes;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static job_portal.Models.Job;
@@ -35,11 +36,22 @@ namespace job_portal.ViewModels
         [Display(Name = "Experience In Years")]
         [Range(minimum: 1, maximum: 30)]
         public int ExperienceRequired { get; set; }
-
-        public List<SelectListItem> JobCategories = new List<SelectListItem>() {
-            new SelectListItem{Text = "random", Value ="Cat1"},
-            new SelectListItem{Text = "random2", Value ="Cat1"},
-        };
+        public List<SelectListItem> JobCategories = new List<SelectListItem>();
+        public Job ToModel(Job job = null)
+        {
+            job = job == null ? new Job() : job;
+            job.Title = Title;
+            job.Location = Location;
+            job.SalaryMax = SalaryMax;
+            job.SalaryMin = SalaryMin;
+            job.Description = Description;
+            job.Vacancy = Vacancy;
+            job.Deadline = Deadline;
+            job.ExperienceRequired = ExperienceRequired;
+            job.Category = new JobCategory() { Id = Category };
+            job.Type = Type;
+            return job;
+        }
 
     }
 }

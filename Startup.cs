@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using job_portal.Data;
+using job_portal.Extensions;
 using job_portal.Services;
 using job_portal.Settings;
 using Microsoft.AspNetCore.Builder;
@@ -48,6 +49,7 @@ namespace job_portal
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddSingleton<IMailService, MailService>();
             Task.Run(() => new SeedData(services.BuildServiceProvider()).SeedAll());
+            services.AddSingleton<IFileStorageService, FileStorageService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +67,7 @@ namespace job_portal
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseRequestLoggingMiddleware();
 
             app.UseRouting();
 
@@ -72,6 +75,10 @@ namespace job_portal
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    name: "defaultArea",
+                    pattern: "{area:exists}/{controller=Home}/{action=Home}/{id?}");
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Home}/{id?}");

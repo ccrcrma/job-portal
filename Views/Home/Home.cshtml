@@ -388,7 +388,10 @@
                                 <!-- founder -->
                                 <div class="testimonial-founder  ">
                                     <div class="founder-img mb-30">
-                                        <img src="~/img/testmonial/testimonial-founder.png" alt="">
+                                        @if(!string.IsNullOrEmpty(testimonial.ImageName)){
+                                            <img src="~/@testimonial.ImagePath" alt="" 
+                                                style="border-radius: 50%; width: 200px; height:200px;">
+                                        }
                                         <span>@testimonial.Name</span>
                                         <p>@testimonial.Designation</p>
                                     </div>

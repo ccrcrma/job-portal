@@ -51,6 +51,7 @@ namespace job_portal.Data
                 testimonial.Property(t => t.Name).IsRequired().HasMaxLength(100);
                 testimonial.Property(t => t.Designation).IsRequired().HasMaxLength(100);
                 testimonial.Property(t => t.Description).IsRequired();
+                testimonial.Property(t => t.ImageName).IsRequired().HasMaxLength(200);
             });
 
             modelBuilder.Entity<Tag>(tag =>
