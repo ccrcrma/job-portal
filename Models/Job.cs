@@ -27,7 +27,7 @@ namespace job_portal.Models
                 if (SalaryMin == null) return "Negotiable";
                 string FormattedSalary = $"${Math.Round(SalaryMin.GetValueOrDefault())}";
                 if (SalaryMax != null)
-                    FormattedSalary = FormattedSalary + $"-${Math.Round(SalaryMax.GetValueOrDefault())}";
+                    FormattedSalary = FormattedSalary + $" - ${Math.Round(SalaryMax.GetValueOrDefault())}";
                 return FormattedSalary;
             }
         }

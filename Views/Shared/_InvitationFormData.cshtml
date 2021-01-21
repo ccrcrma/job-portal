@@ -1,0 +1,25 @@
+@model JobLinkViewModel
+<div class="px-2">
+    <div class="mb-3">
+        <label asp-for="SenderName" class="form-label"></label>
+        <input asp-for="SenderName" class="form-control">
+        <span class="text-danger" asp-validation-for="SenderName"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="SenderEmail" class="form-label"></label>
+        <input asp-for="SenderEmail" class="form-control">
+        <span class="text-danger" asp-validation-for="SenderEmail"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ReceiverName" class="form-label"></label>
+        <input asp-for="ReceiverName" class="form-control">
+        <span class="text-danger" asp-validation-for="ReceiverName"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ReceiverEmail" class="form-label"></label>
+        <input asp-for="ReceiverEmail" class="form-control">
+        <span class="text-danger" asp-validation-for="ReceiverEmail"></span>
+    </div>
+    <input type="hidden" asp-for="LinkUrl">
+    <input type="hidden" asp-for="Title">
+</div>
