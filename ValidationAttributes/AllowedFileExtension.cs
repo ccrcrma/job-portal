@@ -17,10 +17,13 @@ namespace job_portal.ValidationAttributes
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             var formFile = (IFormFile)value;
-            var extension = System.IO.Path.GetExtension(formFile.FileName);
-            if (!_allowedExtension.Contains(extension))
+            if (formFile != null)
             {
-                return new ValidationResult(ErrorMessage = $" extension {extension} not allowed only {string.Join(", ", _allowedExtension)}");
+                var extension = System.IO.Path.GetExtension(formFile.FileName);
+                if (!_allowedExtension.Contains(extension))
+                {
+                    return new ValidationResult(ErrorMessage = $" extension {extension} not allowed only {string.Join(", ", _allowedExtension)}");
+                }
             }
             return ValidationResult.Success;
         }

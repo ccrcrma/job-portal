@@ -1,0 +1,36 @@
+@model PostViewModel
+@{
+    ViewBag.Title = "Create post";
+}
+
+<h2>Add new Post</h2>
+
+
+<form asp-action="Create" asp-controller="Post" enctype="multipart/form-data">
+    <div class="form-group">
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        <div class="form-group">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control">
+            <span class="text-danger" asp-validation-for="Title"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Content" class="form-label"></label>
+            <textarea asp-for="Content" class="form-control"></textarea>
+            <span class="text-danger" asp-validation-for="Content"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="FormFile" class="form-label"></label>
+            <input asp-for="FormFile" class="form-control">
+            <span class="text-danger" asp-validation-for="FormFile"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary bg-primary">Create</button>
+  
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"></partial>
+} 

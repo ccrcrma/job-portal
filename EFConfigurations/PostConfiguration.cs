@@ -1,10 +1,11 @@
+using job_portal.Areas.Administration.Models;
 using job_portal.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace job_portal.EFConfigurations
 {
-    public class PostConfiguration : AuditableEntityConfiguration<Post>
+    public class PostConfiguration : PublishableEntityConfiguration<Post>
     {
         public override void Configure(EntityTypeBuilder<Post> builder)
         {
@@ -16,6 +17,7 @@ namespace job_portal.EFConfigurations
             builder.HasMany<Tag>(p => p.Tags)
                 .WithMany(t => t.Posts)
                 .UsingEntity(j => j.ToTable("post_tags"));
+            builder.Property(p => p.ImageName).IsRequired().HasMaxLength(100);
         }
     }
 }

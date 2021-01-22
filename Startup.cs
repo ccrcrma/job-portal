@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace job_portal
@@ -65,6 +66,19 @@ namespace job_portal
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseStatusCodePages(new StatusCodePagesOptions()
+            {
+                HandleAsync = (ctx) =>
+                {
+                    if (ctx.HttpContext.Response.StatusCode == 404)
+                    {
+                        var logger = app.ApplicationServices.GetService<ILogger<Startup>>();
+                        logger.LogInformation(" 404 error occured");
+                    }
+                    return Task.FromResult(0);
+                }
+            });
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRequestLoggingMiddleware();
@@ -83,6 +97,8 @@ namespace job_portal
                     name: "default",
                     pattern: "{controller=Home}/{action=Home}/{id?}");
             });
+
+
         }
     }
 }

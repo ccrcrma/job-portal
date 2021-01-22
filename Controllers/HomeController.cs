@@ -9,9 +9,7 @@ using job_portal.Models;
 using job_portal.Data;
 using Microsoft.EntityFrameworkCore;
 using job_portal.ViewModels;
-using static job_portal.Models.Job;
 using job_portal.Util;
-using static job_portal.ViewModels.SearchFilterViewModel;
 
 namespace job_portal.Controllers
 {
@@ -38,10 +36,10 @@ namespace job_portal.Controllers
 
         public async Task<IActionResult> HomeAsync([Bind(Prefix = "Filter")] SearchFilterViewModel searchFilter)
         {
-            var filteredJobs= await GetFilteredJobs(searchFilter);
+            var filteredJobs = await GetFilteredJobs(searchFilter);
             var categories = await _context.Set<JobCategory>().Include(jc => jc.Jobs).ToListAsync();
             var testimonials = await _context.Testimonials.ToListAsync();
-            var blogPosts = await _context.Posts.ToListAsync();
+            var blogPosts = await _context.Posts.Select(p => p.ToViewModel()).ToListAsync();
             var vm = new HomeViewModel { Jobs = filteredJobs, Categories = categories, Testimonials = testimonials, Posts = blogPosts };
             return View(vm);
         }

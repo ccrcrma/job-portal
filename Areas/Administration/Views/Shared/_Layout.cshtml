@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <partial name="_StylesheetsPartial"></partial>
+    @RenderSection("Stylesheets", required:false)
+</head>
+
+<body class="bg-light">
+    <main>
+        <div class="container my-5">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title p-2"  style="background-color: #e8e8e8;">  
+                                Menu
+                            </h5>
+                            <ul class="list-group">
+                                <a  asp-action="Home" asp-controller="Home"  class="list-group-item list-group-item-action active">Home</a></li>
+                                <a  asp-action="Create" asp-controller="Post" asp-area="Administration" class="list-group-item list-group-item-action">Create Post</a></li>
+                                <a  href="#" class="list-group-item list-group-item-action">Trash</a></li>
+                                <a  href="#" class="list-group-item list-group-item-action">View Testimonial</a></li>
+                                <a  href="#" class="list-group-item list-group-item-action">Create Testimonial</a></li>
+                                <a  href="#" class="list-group-item list-group-item-action">View Jobs</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                 
+                </div>
+                <div class="col-md-8 offset-md-1 bg-white py-2">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </main>
+    <partial name="_JsPartials"></partial>
+    @RenderSection(name:"Scripts", required:false)
+    @Html.PageScripts()
+</body>
+
+</html>

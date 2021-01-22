@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using job_portal.Areas.Administration.Models;
 using job_portal.EFConfigurations;
 using job_portal.Models;
 using Microsoft.EntityFrameworkCore;

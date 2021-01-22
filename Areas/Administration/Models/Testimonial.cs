@@ -1,7 +1,7 @@
 using System.IO;
 using job_portal.Areas.Administration.ViewModels;
 
-namespace job_portal.Models
+namespace job_portal.Areas.Administration.Models
 {
     public class Testimonial
     {
@@ -29,6 +29,13 @@ namespace job_portal.Models
                 Message = Description,
                 ImagePath = ImagePath
             };
+        }
+
+        public void Update(TestimonialViewModel vm)
+        {
+            Name = vm.PersonName;
+            Designation = vm.Designation;
+            Description = vm.Message;
         }
     }
 }

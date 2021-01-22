@@ -17,9 +17,17 @@ namespace job_portal.Services
             _env = env;
             _config = config;
         }
+        public void DeleteFile(string filePath)
+        {
+            var absFilePath = Path.Combine(_env.WebRootPath, filePath);
+            if (System.IO.File.Exists(absFilePath))
+            {
+                System.IO.File.Delete(absFilePath);
+            }
+        }
         public async Task<string> SaveFileAsync(IFormFile formFile, string baseDirectoryLocation)
         {
-            var folderLocation = Path.Combine(_env.WebRootPath, _config[$"Image:{baseDirectoryLocation}"]);
+            var folderLocation = Path.Combine(_env.WebRootPath, baseDirectoryLocation);
             if (!Directory.Exists(folderLocation))
             {
                 Directory.CreateDirectory(folderLocation);

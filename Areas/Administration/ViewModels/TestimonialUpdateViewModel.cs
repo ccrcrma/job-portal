@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace job_portal.Areas.Administration.ViewModels
 {
-    public class TestimonialViewModel
+    public class TestimonialUpdateViewModel
     {
         [Required(ErrorMessage = "{0} is required")]
         [Display(Name = "Person Name")]
@@ -22,13 +22,12 @@ namespace job_portal.Areas.Administration.ViewModels
         [Required(ErrorMessage = "{0} is Required")]
         [StringLength(500, ErrorMessage = "{0} must be between {2} and {1}", MinimumLength = 3)]
         public string Message { get; set; }
-        [Required]
-        [Display(Name = "Picture")]
+
+        [Display(Name = "Change Picture")]
         [MaxFileSize(sizeInKB: 200)]
         [AllowedFileExtension(".png", ".jpeg", ".jpg")]
         [ValidateFileSignature]
         public IFormFile FormFile { get; set; }
-
         public string ImagePath { get; set; }
         public Testimonial ToModel()
         {
@@ -41,15 +40,15 @@ namespace job_portal.Areas.Administration.ViewModels
             return testimonial;
         }
 
-        public static explicit operator TestimonialUpdateViewModel(TestimonialViewModel viewModel)
+        public static explicit operator TestimonialViewModel(TestimonialUpdateViewModel updateViewModel)
         {
-            return new TestimonialUpdateViewModel
+            return new TestimonialViewModel
             {
-                ImagePath = viewModel.ImagePath,
-                PersonName = viewModel.PersonName,
-                Designation = viewModel.Designation,
-                Message = viewModel.Message,
-                FormFile = viewModel.FormFile
+                ImagePath = updateViewModel.ImagePath,
+                PersonName = updateViewModel.PersonName,
+                Designation = updateViewModel.Designation,
+                Message = updateViewModel.Message,
+                FormFile = updateViewModel.FormFile
             };
         }
     }

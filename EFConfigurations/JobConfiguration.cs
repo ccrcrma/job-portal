@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace job_portal.EFConfigurations
 {
-    public class JobConfiguration : AuditableEntityConfiguration<Job>
+    public class JobConfiguration : PublishableEntityConfiguration<Job>
     {
         public override void Configure(EntityTypeBuilder<Job> builder)
         {

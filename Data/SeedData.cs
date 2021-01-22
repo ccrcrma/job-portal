@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using job_portal.Models;
 using System.Collections.Generic;
+using job_portal.Areas.Administration.Models;
 
 namespace job_portal.Data
 {

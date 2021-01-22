@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using job_portal.Services;
 using Microsoft.EntityFrameworkCore;
+using job_portal.Models;
+using job_portal.Areas.Administration.Models;
 
 namespace job_portal.Areas.Administration.Controllers
 {
@@ -64,12 +66,34 @@ namespace job_portal.Areas.Administration.Controllers
             return LocalRedirect("~/");
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> EditAsync(int id)
         {
             var testimonial = await _context.Testimonials.FirstOrDefaultAsync(t => t.Id == id);
             if (testimonial == null) return NotFound();
-            return View(testimonial.ToViewModel());
+            return View((TestimonialUpdateViewModel)testimonial.ToViewModel());
+        }
+
+        [HttpPost("{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditAsync(int id, TestimonialUpdateViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+            var testimonial = await _context.Testimonials.FirstOrDefaultAsync(t => t.Id == id);
+            if (testimonial == null) return BadRequest();
+
+            testimonial.Update((TestimonialViewModel)vm);
+            if (vm.FormFile != null)
+            {
+               _fileStorageService.DeleteFile(testimonial.ImagePath);
+                testimonial.ImageName = await _fileStorageService.SaveFileAsync(vm.FormFile, Testimonial.BaseDirectory);
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Edit", new { id = id });
+
         }
     }
 }

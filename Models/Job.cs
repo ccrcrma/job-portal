@@ -4,7 +4,7 @@ using job_portal.ViewModels;
 
 namespace job_portal.Models
 {
-    public class Job : AuditableEntity
+    public class Job : PublishableEntity
     {
         public int Id { get; set; }
         public enum JobType

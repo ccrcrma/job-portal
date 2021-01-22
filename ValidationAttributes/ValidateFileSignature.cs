@@ -12,20 +12,23 @@ namespace job_portal.ValidationAttributes
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             var formFile = (FormFile)value;
-            var fileExtension = Path.GetExtension(formFile.FileName);
-            using (var reader = new BinaryReader(formFile.OpenReadStream()))
+            if (formFile != null)
             {
-                if (FileSignatures.signatures.TryGetValue(fileExtension, out List<byte[]> signatures))
+                var fileExtension = Path.GetExtension(formFile.FileName);
+                using (var reader = new BinaryReader(formFile.OpenReadStream()))
                 {
-                    var maxHeaderSize = signatures.Max(s => s.Length);
-                    var headerBytes = reader.ReadBytes(maxHeaderSize);
-                    if (!signatures.Any(s => headerBytes.Take(s.Length).SequenceEqual(s)))
+                    if (FileSignatures.signatures.TryGetValue(fileExtension, out List<byte[]> signatures))
                     {
-                        return new ValidationResult(ErrorMessage = $"File is not valid {fileExtension}");
+                        var maxHeaderSize = signatures.Max(s => s.Length);
+                        var headerBytes = reader.ReadBytes(maxHeaderSize);
+                        if (!signatures.Any(s => headerBytes.Take(s.Length).SequenceEqual(s)))
+                        {
+                            return new ValidationResult(ErrorMessage = $"File is not valid {fileExtension}");
+                        }
                     }
                 }
-                return ValidationResult.Success;
             }
+            return ValidationResult.Success;
         }
     }
 }

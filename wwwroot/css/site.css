@@ -18,3 +18,12 @@
 .show-more {
     display: none;
 }
+
+.image-testimonial{
+    border-radius: 50%;
+    width: 200px;
+    height:200px;
+}
+.input-validation-error {
+    border-color: red;
+}
