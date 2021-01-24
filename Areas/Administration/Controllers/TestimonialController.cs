@@ -46,6 +46,13 @@ namespace job_portal.Areas.Administration.Controllers
             return View();
         }
 
+        [HttpGet("/testimonial")]
+        public async Task<IActionResult> IndexAsync()
+        {
+            var testimonials = await _context.Testimonials.ToListAsync();
+            return View(testimonials);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateAsync(TestimonialViewModel vm)
@@ -88,7 +95,7 @@ namespace job_portal.Areas.Administration.Controllers
             testimonial.Update((TestimonialViewModel)vm);
             if (vm.FormFile != null)
             {
-               _fileStorageService.DeleteFile(testimonial.ImagePath);
+                _fileStorageService.DeleteFile(testimonial.ImagePath);
                 testimonial.ImageName = await _fileStorageService.SaveFileAsync(vm.FormFile, Testimonial.BaseDirectory);
             }
             await _context.SaveChangesAsync();

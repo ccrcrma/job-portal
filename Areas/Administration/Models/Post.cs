@@ -29,6 +29,7 @@ namespace job_portal.Areas.Administration.Models
         {
             return new PostViewModel
             {
+                Status = Status,
                 Id = Id,
                 Title = Title,
                 Content = Body,
@@ -38,7 +39,8 @@ namespace job_portal.Areas.Administration.Models
 
         public void Update(PostViewModel vm)
         {
-            Title= vm.Title;
+            Status = vm.Status;
+            Title = vm.Title;
             Body = vm.Content;
         }
 

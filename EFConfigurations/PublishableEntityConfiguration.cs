@@ -1,4 +1,5 @@
 using job_portal.Models;
+using job_portal.Types;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,6 +14,7 @@ namespace job_portal.EFConfigurations
                 .HasColumnType("tinyint")
                 .IsRequired()
                 .HasDefaultValue(PublishedStatus.Draft);
+            builder.HasQueryFilter(p => p.Status == PublishedStatus.Live);
 
         }
     }

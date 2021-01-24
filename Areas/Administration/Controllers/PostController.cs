@@ -68,23 +68,26 @@ namespace job_portal.Areas.Administration.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> EditAsync(int id)
         {
-            var post = await _context.Posts.FirstOrDefaultAsync(post => post.Id == id);
+            var post = await _context.Posts.IgnoreQueryFilters().FirstOrDefaultAsync(post => post.Id == id);
             if (post == null) return NotFound();
-            return View(post.ToViewModel());
+            return View((PostEditViewModel)post.ToViewModel());
         }
         [HttpPost("{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditAsync(int id, PostViewModel vm)
+        public async Task<IActionResult> EditAsync(int id, PostEditViewModel vm)
         {
             if (!ModelState.IsValid)
             {
                 return View(vm);
             }
-            var post = await _context.Posts.FirstOrDefaultAsync(post => post.Id == id);
+            var post = await _context.Posts.IgnoreQueryFilters().FirstOrDefaultAsync(post => post.Id == id);
             if (post == null) return BadRequest();
-            post.Update(vm);
-            _fileService.DeleteFile(post.ImagePath);
-            post.ImageName = await _fileService.SaveFileAsync(vm.FormFile, Post.PostBaseDirectory);
+            post.Update((PostViewModel)vm);
+            if(vm.FormFile!=null){
+                _fileService.DeleteFile(post.ImagePath);
+                post.ImageName = await _fileService.SaveFileAsync(vm.FormFile, Post.PostBaseDirectory);
+
+            }
             await _context.SaveChangesAsync();
             return LocalRedirect("~/");
         }

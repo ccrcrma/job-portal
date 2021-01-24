@@ -20,11 +20,11 @@
                                 Menu
                             </h5>
                             <ul class="list-group">
-                                <a  asp-action="Home" asp-controller="Home"  class="list-group-item list-group-item-action active">Home</a></li>
+                                <a  asp-action="Home" asp-controller="Home" asp-area="" class="list-group-item list-group-item-action active">Home</a></li>
                                 <a  asp-action="Create" asp-controller="Post" asp-area="Administration" class="list-group-item list-group-item-action">Create Post</a></li>
                                 <a  href="#" class="list-group-item list-group-item-action">Trash</a></li>
-                                <a  href="#" class="list-group-item list-group-item-action">View Testimonial</a></li>
-                                <a  href="#" class="list-group-item list-group-item-action">Create Testimonial</a></li>
+                                <a  asp-action="Index" asp-controller="Testimonial" asp-area="Administration" class="list-group-item list-group-item-action">View Testimonial</a></li>
+                                <a  asp-action="Create" asp-controller="Testimonial" asp-area="Administration" class="list-group-item list-group-item-action">Create Testimonial</a></li>
                                 <a  href="#" class="list-group-item list-group-item-action">View Jobs</a></li>
                             </ul>
                         </div>

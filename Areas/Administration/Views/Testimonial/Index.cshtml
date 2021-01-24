@@ -1,0 +1,33 @@
+@model List<Testimonial>
+
+@{
+    ViewBag.Title = "Testimonials";
+}
+
+@if(Model.Count() == 0){
+    <h2>No any testimonials Please create</h2>
+}
+else 
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Picture</th>
+                <th>Name</th>
+                <th>Designation</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var testimonial in Model){
+            <tr>
+                <td><img src="@testimonial.ImagePath" class="image-testimonial"></td>
+                <td>@testimonial.Name</td>
+                <td>@testimonial.Designation</td>
+                <td>@testimonial.Description</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+ 
+}

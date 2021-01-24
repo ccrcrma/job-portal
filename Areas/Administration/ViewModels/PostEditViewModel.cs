@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace job_portal.Areas.Administration.ViewModels
 {
-    public class PostViewModel
+    public class PostEditViewModel
     {
         [Required(ErrorMessage = "{0} is Required")]
         [StringLength(200, ErrorMessage = "{0} must be between {2} and {1} characters long")]
@@ -17,7 +17,6 @@ namespace job_portal.Areas.Administration.ViewModels
         [Required(ErrorMessage = "{0} is Required")]
         public string Content { get; set; }
 
-        [Required]
         [Display(Name = "Picture")]
         [MaxFileSize(5000)]
         [AllowedFileExtension(".png", ".jpeg", ".jpg")]
@@ -39,19 +38,18 @@ namespace job_portal.Areas.Administration.ViewModels
             };
         }
 
-
-        public static explicit operator PostEditViewModel(PostViewModel postViewModel)
+        public static explicit operator PostViewModel(PostEditViewModel editViewModel)
         {
-            return new PostEditViewModel
-            {   ImagePath = postViewModel.ImagePath,
-                Id = postViewModel.Id,
-                Title = postViewModel.Title,
-                FormFile = postViewModel.FormFile,
-                Status = postViewModel.Status,
-                Content = postViewModel.Content
+            return new PostViewModel
+            {
+                ImagePath = editViewModel.ImagePath,
+                Id = editViewModel.Id,
+                Title = editViewModel.Title,
+                FormFile = editViewModel.FormFile,
+                Status = editViewModel.Status,
+                Content  = editViewModel.Content
 
             };
         }
-
     }
 }
