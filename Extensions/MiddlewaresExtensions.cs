@@ -1,4 +1,4 @@
-using job_portals.Middlewares;
+using job_portal.Middlewares;
 using Microsoft.AspNetCore.Builder;
 
 namespace job_portal.Extensions

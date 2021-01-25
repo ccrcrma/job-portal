@@ -89,15 +89,31 @@ namespace job_portal
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "defaultArea",
-                    pattern: "{area:exists}/{controller=Home}/{action=Home}/{id?}");
 
+                endpoints.MapAreaControllerRoute(
+                    name: "post",
+                    areaName: "Administration",
+                    pattern: "post/{action=Index}/{id?}",
+                    defaults: new {controller = "Post"});
+
+                endpoints.MapAreaControllerRoute(
+                    name: "testimonial",
+                    areaName: "Administration",
+                    pattern: "testimonial/{action=Index}/{id?}",
+                    defaults: new {controller = "Testimonial"});
+
+                endpoints.MapAreaControllerRoute(
+                    name: "dashboard",
+                    areaName: "Administration",
+                    pattern: "dashboard/{action=Index}/{id?}",
+                    defaults: new {controller = "Dashboard"});
+
+                
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Home}/{id?}");
-            });
 
+            });
 
         }
     }

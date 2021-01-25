@@ -18,12 +18,20 @@
 .show-more {
     display: none;
 }
+.image-index, .image-testimonial{
+    width: 200px;
+    height:200px;
+    object-fit: cover;
+}
 
 .image-testimonial{
     border-radius: 50%;
-    width: 200px;
-    height:200px;
+
 }
 .input-validation-error {
     border-color: red;
+}
+
+.btn-sm {
+    padding:1.3rem;
 }

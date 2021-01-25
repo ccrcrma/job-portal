@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
 namespace job_portal.Controllers
@@ -32,7 +33,8 @@ namespace job_portal.Controllers
                 Name = x.AttributeRouteInfo?.Name,
                 Template = x.AttributeRouteInfo?.Template
             }).ToList();
+
             return Ok(routes);
-        }
     }
+}
 }

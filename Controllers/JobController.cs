@@ -1,5 +1,8 @@
 using job_portal.Data;
+using job_portal.Extensions;
+using job_portal.Interfaces;
 using job_portal.Models;
+using job_portal.Util;
 using job_portal.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -29,7 +32,19 @@ namespace job_portal.Controllers
             SetCategories(vm);
             return View(vm);
         }
-        public void SetCategories(JobViewModel vm)
+
+        [HttpGet]
+        public async Task<IActionResult> IndexAsync(int page = 1)
+        {
+            var pageSize = 5;
+            var jobsQueryable = _context.Jobs
+                .IgnoreQueryFilters()
+                .OrderByDescending(j => j.UpdatedOn);
+
+            var vm = await PaginationModal<Job>.CreateAsync(jobsQueryable, pageIndex:page, pageSize: pageSize);
+            return View(vm);
+        }
+        private void SetCategories(JobViewModel vm)
         {
             vm.JobCategories = _context.Set<JobCategory>().Select(job => new SelectListItem
             {
@@ -61,13 +76,52 @@ namespace job_portal.Controllers
         [HttpGet]
         public async Task<IActionResult> EditAsync(int id)
         {
-            var job = await _context.Jobs.Include(j => j.Category).FirstOrDefaultAsync(j => j.Id == id);
+            var job = await _context.Jobs.Include(j => j.Category).IgnoreQueryFilters()
+            .FirstOrDefaultAsync(j => j.Id == id);
             if (job == null)
                 return NotFound();
             var vm = job.ToViewModel();
             SetCategories(vm);
             return View(vm);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var job = await _context.Jobs.IgnoreQueryFilters().FirstOrDefaultAsync(j => j.Id == id);
+            if (job == null) return BadRequest();
+            _context.Entry(job).State = EntityState.Deleted;
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Dashboard").WithSuccess("hurray", "job deleted Successfully");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TrashAsync(int id)
+        {
+            var job = await _context.Jobs.AsNoTracking().IgnoreQueryFilters().FirstOrDefaultAsync(j => j.Id == id);
+            if (job == null)
+            {
+                return BadRequest();
+            }
+            var deleteableEntity = (ISoftDelete)job;
+            deleteableEntity.Trash();
+            _context.Entry((Job)deleteableEntity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Dashboard").WithDanger(string.Empty, $"job with id {id} deleted ");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreAsync(int id)
+        {
+            var job = await _context.Jobs.IgnoreQueryFilters().AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+            if (job == null) return BadRequest();
+            var deleteableEntity = (ISoftDelete)job;
+            deleteableEntity.Restore();
+            _context.Entry((Job)(deleteableEntity)).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Dashboard").WithDanger(string.Empty, "job restored successfully");
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditAsync(int id, JobViewModel vm)
@@ -85,9 +139,10 @@ namespace job_portal.Controllers
             return LocalRedirect("~/");
         }
 
+        [HttpGet]
         public async Task<IActionResult> DetailAsync(int id)
         {
-            var job = await _context.Jobs.FirstOrDefaultAsync(j => j.Id == id);
+            var job = await _context.Jobs.IgnoreQueryFilters().FirstOrDefaultAsync(j => j.Id == id);
             if (job == null) return NotFound();
             return View(job);
         }

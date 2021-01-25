@@ -31,7 +31,7 @@ namespace job_portal.Data
 
         private async Task SeedJobs()
         {
-            if (await _context.Jobs.CountAsync() <= 0)
+            if (await _context.Jobs.CountAsync() == 0)
             {
                 Job[] jobs =
                 {

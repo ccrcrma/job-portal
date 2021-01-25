@@ -6,11 +6,12 @@ using job_portal.Areas.Administration.ViewModels;
 using job_portal.Services;
 using job_portal.Areas.Administration.Models;
 using System.IO;
+using job_portal.Extensions;
+using job_portal.Interfaces;
 
 namespace job_portal.Areas.Administration.Controllers
 {
     [Area("Administration")]
-    [Route("[controller]/[action]")]
     public class PostController : Controller
     {
         private readonly IFileStorageService _fileService;
@@ -52,7 +53,6 @@ namespace job_portal.Areas.Administration.Controllers
             return LocalRedirect("~/");
         }
 
-        [HttpGet("{id}")]
         public async Task<IActionResult> DetailAsync(int id)
         {
             var post = await _context.Posts
@@ -65,15 +65,16 @@ namespace job_portal.Areas.Administration.Controllers
             return View(post);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         public async Task<IActionResult> EditAsync(int id)
         {
             var post = await _context.Posts.IgnoreQueryFilters().FirstOrDefaultAsync(post => post.Id == id);
             if (post == null) return NotFound();
             return View((PostEditViewModel)post.ToViewModel());
         }
-        [HttpPost("{id}")]
+
         [ValidateAntiForgeryToken]
+        [HttpPost]
         public async Task<IActionResult> EditAsync(int id, PostEditViewModel vm)
         {
             if (!ModelState.IsValid)
@@ -83,13 +84,53 @@ namespace job_portal.Areas.Administration.Controllers
             var post = await _context.Posts.IgnoreQueryFilters().FirstOrDefaultAsync(post => post.Id == id);
             if (post == null) return BadRequest();
             post.Update((PostViewModel)vm);
-            if(vm.FormFile!=null){
+            if (vm.FormFile != null)
+            {
                 _fileService.DeleteFile(post.ImagePath);
                 post.ImageName = await _fileService.SaveFileAsync(vm.FormFile, Post.PostBaseDirectory);
 
             }
             await _context.SaveChangesAsync();
             return LocalRedirect("~/");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var post = await _context.Posts.FirstOrDefaultAsync(p => p.Id == id);
+            if (post == null) return BadRequest();
+            _context.Entry(post).State = EntityState.Deleted;
+            _fileService.DeleteFile(post.ImagePath);
+            await _context.SaveChangesAsync();
+            TempData["alert-type"] = "success";
+            TempData["alert-message"] = "post deleted successfully";
+            return RedirectToAction("Index", "Dashboard");
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TrashAsync(int id)
+        {
+            var post = await _context.Posts.FirstOrDefaultAsync(p => p.Id == id);
+            if (post == null) return BadRequest();
+            ((ISoftDelete)post).Trash();
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Dashboard").WithDanger(string.Empty, "post deleted successfully");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreAsync(int id)
+        {
+            var post = await _context.Posts.IgnoreQueryFilters().AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+            if (post == null) return BadRequest();
+            var deleteableEntity = (ISoftDelete)post;
+            deleteableEntity.Restore();
+            _context.Entry((Post)(deleteableEntity)).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Dashboard").WithDanger(string.Empty, "post restored successfully");
         }
     }
 }

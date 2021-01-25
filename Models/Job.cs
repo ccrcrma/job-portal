@@ -1,10 +1,11 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using job_portal.Interfaces;
 using job_portal.ViewModels;
 
 namespace job_portal.Models
 {
-    public class Job : PublishableEntity
+    public class Job : PublishableEntity, ISoftDelete
     {
         public int Id { get; set; }
         public enum JobType
@@ -38,6 +39,7 @@ namespace job_portal.Models
         public int Vacancy { get; set; }
         public DateTime Deadline { get; set; }
         public int ExperienceRequired { get; set; }
+        public bool IsSoftDeleted { get ; set; }
 
         public JobViewModel ToViewModel()
         {

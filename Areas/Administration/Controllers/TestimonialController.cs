@@ -18,7 +18,6 @@ using job_portal.Areas.Administration.Models;
 namespace job_portal.Areas.Administration.Controllers
 {
     [Area("Administration")]
-    [Route("[controller]/[action]")]
     public class TestimonialController : Controller
     {
         private readonly IFileStorageService _fileStorageService;
@@ -46,7 +45,7 @@ namespace job_portal.Areas.Administration.Controllers
             return View();
         }
 
-        [HttpGet("/testimonial")]
+        [HttpGet]
         public async Task<IActionResult> IndexAsync()
         {
             var testimonials = await _context.Testimonials.ToListAsync();
@@ -73,7 +72,7 @@ namespace job_portal.Areas.Administration.Controllers
             return LocalRedirect("~/");
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         public async Task<IActionResult> EditAsync(int id)
         {
             var testimonial = await _context.Testimonials.FirstOrDefaultAsync(t => t.Id == id);
@@ -81,8 +80,8 @@ namespace job_portal.Areas.Administration.Controllers
             return View((TestimonialUpdateViewModel)testimonial.ToViewModel());
         }
 
-        [HttpPost("{id}")]
         [ValidateAntiForgeryToken]
+        [HttpPost]
         public async Task<IActionResult> EditAsync(int id, TestimonialUpdateViewModel vm)
         {
             if (!ModelState.IsValid)

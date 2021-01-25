@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using job_portal.Areas.Administration.ViewModels;
+using job_portal.Interfaces;
 using job_portal.Models;
 
 namespace job_portal.Areas.Administration.Models
 {
-    public class Post : PublishableEntity
+    public class Post : PublishableEntity, ISoftDelete
     {
         public const string PostBaseDirectory = "img/posts";
         public int Id { get; set; }
         public string Title { get; set; }
         public string Body { get; set; }
         public List<Tag> Tags { get; set; } = new List<Tag>();
-
         public string ImageName { get; set; }
         public string ImagePath
         {
@@ -62,5 +62,7 @@ namespace job_portal.Areas.Administration.Models
                 return builder.ToString();
             }
         }
+
+        public bool IsSoftDeleted { get; set; }
     }
 }

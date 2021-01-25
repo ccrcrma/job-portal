@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using job_portal.Areas.Administration.Models;
 using job_portal.EFConfigurations;
+using job_portal.Extensions.SoftDeleteQueryExtension;
+using job_portal.Interfaces;
 using job_portal.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -21,10 +23,6 @@ namespace job_portal.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Job> Jobs { get; set; }
-
-
-
-
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -63,6 +61,14 @@ namespace job_portal.Data
 
             modelBuilder.ApplyConfiguration(new PostConfiguration());
             modelBuilder.ApplyConfiguration(new JobConfiguration());
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+                {
+                    entityType.AddSoftDeleteQueryFilter();
+                }
+            }
         }
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
