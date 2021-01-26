@@ -9,15 +9,13 @@ namespace job_portal.Util
     public class PaginationModal<T> : List<T> where T : class
     {
         public int TotalPage { get; set; }
-        public int CurrentPage { get; set; } = 1;
-
+        public int CurrentPage { get; set; }
         public PaginationModal(List<T> items, int currentPage, int totalPage)
         {
             AddRange(items);
             CurrentPage = currentPage;
             TotalPage = totalPage;
         }
-
         public bool HasNextPage
         {
             get
@@ -32,7 +30,7 @@ namespace job_portal.Util
                 return CurrentPage > 1;
             }
         }
-        public static async Task<PaginationModal<T>> CreateAsync(IQueryable<T> queryable, int pageIndex, int pageSize)
+        public static async Task<PaginationModal<T>> CreateAsync(IQueryable<T> queryable, int pageIndex=1, int pageSize=5)
         {
             var totalItems = await queryable.CountAsync();
             var items = await queryable

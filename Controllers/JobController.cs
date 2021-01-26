@@ -1,4 +1,5 @@
 using job_portal.Data;
+using job_portal.DTOs;
 using job_portal.Extensions;
 using job_portal.Interfaces;
 using job_portal.Models;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,15 +35,58 @@ namespace job_portal.Controllers
             return View(vm);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeStatusAsync(int id)
+        {
+            _logger.LogInformation($"request to change status for {id}");
+            var job = await _context.Jobs.IgnoreQueryFilters().FirstOrDefaultAsync(j => j.Id == id);
+            if (job == null) return BadRequest();
+            job.ChangePublishedStatus();
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                Status = job.Status.ToString(),
+                ChangeUrl = Url.RouteUrl("default", new { Controller = "Job", Action = "ChangeStatus", id = $"{id}" })
+            });
+        }
+
         [HttpGet]
         public async Task<IActionResult> IndexAsync(int page = 1)
         {
-            var pageSize = 5;
             var jobsQueryable = _context.Jobs
                 .IgnoreQueryFilters()
-                .OrderByDescending(j => j.UpdatedOn);
+                .OrderByDescending(j => j.UpdatedOn)
+                .Select(j => new JobDTO
+                {
+                    CreatedDate = j.CreatedOn.GetHumanFriendlyDate(),
+                    Position = j.Title,
+                    Status = new
+                    {
+                        Text = j.Status.ToString(),
+                        ChangeUrl = Url.RouteUrl("default", new { Controller = "Job", action = "ChangeStatus", id = $"{j.Id}" })
+                    },
+                    Company = "some random company",
+                    Url = Url.RouteUrl("default", new { controller = "Job", action = "Detail", id = $"{j.Id}" })
+                });
+            var vm = await PaginationModal<JobDTO>.CreateAsync(jobsQueryable, pageIndex: page);
+            var accept = Request.Headers[HeaderNames.Accept];
+            if (accept == "application/json")
+            {
+                return Ok(new
+                {
+                    items = vm,
+                    metaData = new
+                    {
+                        BaseUrl = Url.RouteUrl("default", new { controller = "Job", action = "Index" }),
+                        HasPrevious = vm.HasPreviousPage,
+                        HasNext = vm.HasNextPage,
+                        CurrentPage = vm.CurrentPage,
+                        TotalPage = vm.TotalPage
+                    }
+                });
+            }
 
-            var vm = await PaginationModal<Job>.CreateAsync(jobsQueryable, pageIndex:page, pageSize: pageSize);
             return View(vm);
         }
         private void SetCategories(JobViewModel vm)

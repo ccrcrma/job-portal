@@ -7,5 +7,10 @@ namespace job_portal.Models
     {
         public PublishedStatus Status { get; set; }
 
+        public void ChangePublishedStatus()
+        {
+            Status = Status == PublishedStatus.Live ? PublishedStatus.Draft : PublishedStatus.Live;
+        }
+
     }
 }
