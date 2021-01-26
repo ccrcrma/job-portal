@@ -1,6 +1,7 @@
 ﻿@{
     Layout = "";
 }
+
 <!doctype html>
 <html class="no-js" lang="zxx">
     <head>
@@ -28,6 +29,7 @@
     <!-- Preloader Start -->
     <header>
         <!-- Header Start -->
+        @await Html.PartialAsync("_LoginModalPartial", new LoginViewModel())
        <div class="header-area header-transparrent">
            <div class="headder-top header-sticky">
                 <div class="container">
@@ -44,15 +46,15 @@
                                 <div class="main-menu">
                                     <nav class="d-none d-lg-block">
                                         <ul id="navigation">
-                                            <li><a href="#" class="menu-link-uppercase">For job seeker</a></li>
-                                            <li><a href="#" class="menu-link-uppercase">For employer</a></li>
+                                            <li><a asp-controller = "Account", asp-action="Register" asp-area="Seeker" class="menu-link-uppercase">For job seeker</a></li>
+                                            <li><a asp-controller="Account" asp-action="Register" asp-area="Employer" class="menu-link-uppercase">For employer</a></li>
                                             <li><a href="#" class="menu-link-uppercase">Company</a></li>
                                         </ul>
                                     </nav>
                                 </div>          
                                 <!-- Header-btn -->
-                                <button class="btn">
-                                    <a href="#" >Login</a>
+                                <button class="btn" data-toggle="modal" data-target="#login-modal">
+                                    Login
                                 </button>
                             </div>
                         </div>

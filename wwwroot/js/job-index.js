@@ -1,5 +1,4 @@
 window.addEventListener("load", function(event){
-
     async function ChangePublishedStatusRequest(url){
         var csrftoken = document.getElementById("RequestVerificationToken")
         var response = await fetch(url, {method:"POST", headers:{RequestVerificationToken: csrftoken.value}});

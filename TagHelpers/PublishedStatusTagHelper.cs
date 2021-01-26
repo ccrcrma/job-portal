@@ -15,7 +15,7 @@ namespace job_portal.TagHelpers
         {
             output.TagName = "span";
             output.AddClass("badge", htmlEncoder: HtmlEncoder.Default);
-            output.AddClass("status", HtmlEncoder.Default);
+            output.AddClass("status", htmlEncoder: HtmlEncoder.Default);
             output.Attributes.SetAttribute("data-action", ChangeUrl);
             if (Status == PublishedStatus.Live)
             {

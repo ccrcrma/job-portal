@@ -94,21 +94,34 @@ namespace job_portal
                     name: "post",
                     areaName: "Administration",
                     pattern: "post/{action=Index}/{id?}",
-                    defaults: new {controller = "Post"});
+                    defaults: new { controller = "Post" });
 
                 endpoints.MapAreaControllerRoute(
                     name: "testimonial",
                     areaName: "Administration",
                     pattern: "testimonial/{action=Index}/{id?}",
-                    defaults: new {controller = "Testimonial"});
+                    defaults: new { controller = "Testimonial" });
 
                 endpoints.MapAreaControllerRoute(
                     name: "dashboard",
                     areaName: "Administration",
                     pattern: "dashboard/{action=Index}/{id?}",
-                    defaults: new {controller = "Dashboard"});
+                    defaults: new { controller = "Dashboard" });
 
-                
+                endpoints.MapAreaControllerRoute(
+                    name: "seeker-regisration",
+                    areaName: "Seeker",
+                    pattern: "register",
+                    defaults: new { controller = "Account", action = "Register" }
+                );
+
+                endpoints.MapAreaControllerRoute(
+                    name: "employer-registration",
+                    areaName: "Employer",
+                    pattern: "employer/register",
+                    defaults: new { controller = "Account", action = "Register" }
+                );
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Home}/{id?}");

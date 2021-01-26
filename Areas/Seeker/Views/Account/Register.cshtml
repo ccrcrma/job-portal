@@ -1,0 +1,79 @@
+@model RegistrationViewModel
+<p>@Url.RouteUrl("seeker-registraion")</p>
+<div class="container my-3">
+    <h2 class="mb-3">Seeker Registration</h2>
+    <div class="row bg-light">
+        <div class="col-md-9">
+            <form asp-action="Register">
+                <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                <div class="form-group">
+                    <label asp-for="FirstName" class="label-control"></label>
+                    <input asp-for="FirstName" class="form-control">
+                    <span class="text-danger" asp-validation-for="FirstName"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MiddleName" class="form-label"></label>
+                    <input asp-for="MiddleName" class="form-control">
+                    <span class="text-danger" asp-validation-for="MiddleName"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LastName" class="form-label"></label>
+                    <input asp-for="LastName" class="form-control">
+                    <span class="text-danger" asp-validation-for="LastName"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control">
+                    <span class="text-danger" asp-validation-for="Email"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DOB" class="form-label"></label>
+                    <input asp-for="DOB" class="form-control">
+                    <span class="text-danger" asp-validation-for="DOB"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-control">
+                    <span class="text-danger" asp-validation-for="Password"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword" class="form-label"></label>
+                    <input asp-for="ConfirmPassword" class="form-control">
+                    <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+                </div>
+                <div class="form-check">
+                    <label asp-for="Gender" class="form-label" style="margin-left:-1.25rem;"></label>
+                    <br/>
+                    <div style="margin-bottom:-1.2rem;">
+                        @foreach (var gender in (Gender[])Enum.GetValues(typeof(Gender)))
+                        {
+                            <p class="d-inline-block mr-5">
+                                <input asp-for="Gender" type="radio" class="form-check-input" value="@gender.ToString()">
+                                <label class="form-check-label">@gender.ToString()</label>
+                            </p>
+                        }
+                    </div>
+                    <span class="text-danger" asp-validation-for="Gender" style="margin-left: -1.25rem;"></span>
+                </div>
+                <div class="form-group">
+                    <button  class="btn btn-sm bg-success" type="submit">Register As seeker</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-3">
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-body">
+                    <h5 class="card-title">More Info</h5>
+                    <p class="card-text">Once you create a account a verification link will be sent to your email</p>
+                    <a href="#" class="btn bg-success">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"></partial>
+}
+
