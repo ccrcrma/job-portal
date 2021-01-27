@@ -1,3 +1,4 @@
+@using job_portal.Areas.Identity.ViewModels
 @model LoginViewModel
 <div class="modal fade" id="login-modal">
     <div class="modal-dialog">
@@ -6,7 +7,7 @@
                 <h5 class="modal-title">Login</h5>
                 <button data-dismiss="modal" class="close">&times;</button>
             </div>
-            <form asp-action="SignIn" asp-controller="Login">
+            <form asp-action="SignIn" asp-controller="Account" id="login-form" asp-area="Identity">
                 <div class="text-danger" asp-validation-summary="ModelOnly"></div>
                 <div class="modal-body">
                     <div class="form-group">
@@ -25,7 +26,7 @@
                         <span class="text-danger" asp-validation-for="RememberMe"></span>
                     </div>
                     <div class="form-group">
-                        <a class="text-danger" href="#">Forgot your password?</a>
+                        <a class="text-danger" asp-action="ResetPassword" asp-controller="Account" asp-area="Identity">Forgot your password?</a>
                     </div>
                 </div>
                 <div class="modal-footer d-flex">
@@ -37,6 +38,51 @@
     </div>
 </div>
 
-@using(Html.BeginScripts()){
+@using (Html.BeginScripts())
+{
     <partial name="_ValidationScriptsPartial"> </partial>
+    <script>
+    var form = document.getElementById("login-form");
+
+    async function LoginHttpRequest(data, url) {
+        var response = fetch(url, {
+            body: data,
+            method: "POST"
+        });
+        return response;
+    }
+    document.getElementById("login-form").onsubmit = async function (event) {
+        event.preventDefault();
+        $("#login-form").validate();
+        if ($("#login-form").valid()) {
+            var modalErrorDiv = document.querySelector("div.text-danger");
+        
+            var formData = new FormData(form);
+            var action = form.getAttribute("action");
+            var response = await LoginHttpRequest(formData, action);
+            console.log("fetch request made");
+            responseBody = await response.json();
+            console.log(response.status);
+            if (response.status == 400) {
+                var { errors } = responseBody;
+                modalErrorDiv = document.createElement("div");
+                modalErrorDiv.style.marginLeft = "1.5rem";
+                modalErrorDiv.classList.add("text-danger")
+                modalErrorDiv.innerHTML = ""
+                for (var error of errors) {
+                    let p = document.createElement("p");
+                    p.classList.add("text-danger");
+                    p.appendChild(document.createTextNode(error));
+                    modalErrorDiv.appendChild(p);
+                }
+                form.prepend(modalErrorDiv);
+            }else if(response.status == 200) {
+                console.log("successful");
+                console.log(responseBody)
+                window.location = responseBody.url;
+            }
+            
+        }
+    }
+</script>
 }

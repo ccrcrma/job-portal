@@ -1,10 +1,10 @@
-@model RegistrationViewModel
+@model SeekerUserRegistrationViewModel
 <p>@Url.RouteUrl("seeker-registraion")</p>
 <div class="container my-3">
     <h2 class="mb-3">Seeker Registration</h2>
     <div class="row bg-light">
         <div class="col-md-9">
-            <form asp-action="Register">
+            <form asp-action="RegisterSeekerUser">
                 <div class="text-danger" asp-validation-summary="ModelOnly"></div>
                 <div class="form-group">
                     <label asp-for="FirstName" class="label-control"></label>

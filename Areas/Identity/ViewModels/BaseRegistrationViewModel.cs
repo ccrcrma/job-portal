@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace job_portal.ViewModels
+namespace job_portal.Areas.Identity.ViewModels
 {
     public class BaseRegistrationViewModel
     {

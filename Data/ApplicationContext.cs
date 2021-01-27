@@ -2,16 +2,18 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using job_portal.Areas.Administration.Models;
+using job_portal.Areas.Identity.Models;
 using job_portal.EFConfigurations;
 using job_portal.Extensions.SoftDeleteQueryExtension;
 using job_portal.Interfaces;
 using job_portal.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace job_portal.Data
 {
-    public class ApplicationContext : DbContext
+    public class ApplicationContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
@@ -61,6 +63,16 @@ namespace job_portal.Data
 
             modelBuilder.ApplyConfiguration(new PostConfiguration());
             modelBuilder.ApplyConfiguration(new JobConfiguration());
+
+            modelBuilder.Entity<ApplicationUser>(applicationUser =>
+            {
+                applicationUser.Property(u => u.FirstName).IsRequired().HasMaxLength(100);
+                applicationUser.Property(u => u.LastName).IsRequired().HasMaxLength(100);
+                applicationUser.Property(u => u.MiddleName).HasMaxLength(100);
+                applicationUser.Property(u => u.DOB).IsRequired().HasColumnType("date");
+                applicationUser.Property(u => u.Gender).IsRequired().HasColumnType("tinyint(2)") .HasMaxLength(100);
+
+            });
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {

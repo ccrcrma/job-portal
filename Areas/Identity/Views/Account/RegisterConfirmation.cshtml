@@ -1,0 +1,14 @@
+@{
+    ViewBag.Title = "register confirmation";
+
+}
+
+<div class="container my-3">
+    <p>A confirmation link has been sent to @ViewBag.Email . Please click the link to activate your account</p>
+    <p class="d-inline-block">If you didn't receive the code please 
+        <form asp-action="SendEmailConfirmationLink" class="d-inline-block mx-1">
+            <input type="text" name="email" value="@ViewBag.Email" id="">
+            <input class="text-primary" type="submit" value ="click here" style="background: none; border:none;">
+        </form>
+    to resend the code</p>
+</div>

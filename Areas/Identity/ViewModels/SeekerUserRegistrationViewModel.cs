@@ -1,11 +1,10 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using job_portal.Areas.Seeker.Types;
-using job_portal.ViewModels;
+using job_portal.Areas.Identity.Types;
 
-namespace job_portal.Areas.Seeker.ViewModels
+namespace job_portal.Areas.Identity.ViewModels
 {
-    public class RegistrationViewModel : BaseRegistrationViewModel
+    public class SeekerUserRegistrationViewModel : BaseRegistrationViewModel
     {
         [Required(ErrorMessage = "{0} is Required")]
         [Display(Name = "First Name")]

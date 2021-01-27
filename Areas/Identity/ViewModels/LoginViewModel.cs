@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace job_portal.ViewModels
+namespace job_portal.Areas.Identity.ViewModels
 {
     public class LoginViewModel
     {
@@ -15,11 +15,6 @@ namespace job_portal.ViewModels
 
         [Display(Name = "Remember Me")]
         public bool RememberMe { get; set; }
-
-
-
-
-
 
     }
 }

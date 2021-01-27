@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using job_portal.Areas.Identity.Models;
 using job_portal.Data;
 using job_portal.Extensions;
 using job_portal.Services;
@@ -9,6 +10,7 @@ using job_portal.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,6 +48,19 @@ namespace job_portal
                     .EnableDetailedErrors()
 
             );
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                    .AddEntityFrameworkStores<ApplicationContext>()
+                    .AddDefaultTokenProviders();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 5;
+                options.SignIn.RequireConfirmedEmail = true;
+            });
 
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddSingleton<IMailService, MailService>();
@@ -110,17 +125,22 @@ namespace job_portal
 
                 endpoints.MapAreaControllerRoute(
                     name: "seeker-regisration",
-                    areaName: "Seeker",
+                    areaName: "Identity",
                     pattern: "register",
-                    defaults: new { controller = "Account", action = "Register" }
+                    defaults: new { controller = "Account", action = "RegisterSeekerUser" }
                 );
 
                 endpoints.MapAreaControllerRoute(
                     name: "employer-registration",
-                    areaName: "Employer",
+                    areaName: "Identity",
                     pattern: "employer/register",
-                    defaults: new { controller = "Account", action = "Register" }
+                    defaults: new { controller = "Account", action = "RegisterEmployerUser" }
                 );
+                endpoints.MapAreaControllerRoute(
+                    name: "identity-routes",
+                    areaName: "Identity",
+                    pattern: "account/{action}/{id?}",
+                    defaults: new { controller = "Account" });
 
                 endpoints.MapControllerRoute(
                     name: "default",

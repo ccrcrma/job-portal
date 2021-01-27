@@ -38,3 +38,7 @@
 .form-check-input {
     margin-top: .5rem;
 }
+
+form .error{
+    color: #ff0000;
+}
