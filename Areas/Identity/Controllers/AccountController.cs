@@ -83,7 +83,91 @@ namespace job_portal.Areas.Identity.Controllers
         {
             return View();
         }
-        
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("ResetPassword")]
+        public async Task<IActionResult> ResetPasswordAsync(string email)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null) return BadRequest();
+            await SendResetPasswordLink(user);
+            return RedirectToAction("ResetPassword")
+                .WithSuccess($"password reset link has been sent to your email {email}", string.Empty);
+        }
+
+        private async Task SendResetPasswordLink(ApplicationUser user)
+        {
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = Url.Action("ConfirmResetPassword", "Account", new { Area = "Identity", code = code, userId = user.Id }, Request.Scheme);
+            var messageBody = $"Plase <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'> click here </a> to reset your password ";
+            MailRequest mailRequest = new MailRequest
+            {
+                To = user.Email,
+                Subject = "Password Reset",
+                Body = messageBody
+            };
+            await _mailService.SendMailAsync(mailRequest);
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmResetPasswordAsync(string code, string userId)
+        {
+            if (string.IsNullOrEmpty(code) && string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            var codeBytes = WebEncoders.Base64UrlDecode(code);
+            code = Encoding.UTF8.GetString(codeBytes);
+            var result = await _userManager.VerifyUserTokenAsync(
+                user, _userManager.Options.Tokens.PasswordResetTokenProvider, "ResetPassword", code);
+            ViewBag.token = code;
+            ViewBag.userId = userId;
+            if (result)
+            {
+                return View();
+            }
+            return RedirectToAction("Error", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmResetPasswordAsync(string password, string token, string userId)
+        {
+            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userId))
+            {
+                return BadRequest();
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            var res = await _userManager.ResetPasswordAsync(user, token, password);
+            if (res.Succeeded)
+            {
+                return LocalRedirect("~/").WithSuccess("congrats", "your password reset was successful");
+            }
+            return RedirectToAction("Error", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
+            return LocalRedirect("~/");
+        }
+
         [HttpGet]
         public IActionResult RegisterSeekerUser()
         {

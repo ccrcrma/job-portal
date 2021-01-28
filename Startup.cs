@@ -62,6 +62,11 @@ namespace job_portal
                 options.SignIn.RequireConfirmedEmail = true;
             });
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/";
+            });
+
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddSingleton<IMailService, MailService>();
             Task.Run(() => new SeedData(services.BuildServiceProvider()).SeedAll());
@@ -99,6 +104,7 @@ namespace job_portal
             app.UseRequestLoggingMiddleware();
 
             app.UseRouting();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
@@ -141,6 +147,13 @@ namespace job_portal
                     areaName: "Identity",
                     pattern: "account/{action}/{id?}",
                     defaults: new { controller = "Account" });
+
+                endpoints.MapAreaControllerRoute(
+                    name: "seeker-routes",
+                    areaName: "Seeker",
+                    pattern: "user/{action=Index}/{id?}",
+                    defaults: new { controller = "Seeker" }
+                );
 
                 endpoints.MapControllerRoute(
                     name: "default",

@@ -7,38 +7,46 @@
 .btn {
     font-size: 1.2rem;
 }
-.btn::before{
-    all:initial;
+.btn::before {
+    all: initial;
 }
 
 .sort-select {
-    margin-top:-6px;
+    margin-top: -6px;
     margin-left: 7px;
 }
 .show-more {
     display: none;
 }
-.image-index, .image-testimonial{
+.image-index,
+.image-testimonial {
     width: 200px;
-    height:200px;
+    height: 200px;
     object-fit: cover;
 }
 
-.image-testimonial{
+.image-testimonial {
     border-radius: 50%;
-
 }
 .input-validation-error {
     border-color: red;
 }
 
 .btn-sm {
-    padding:1.3rem;
+    padding: 1.3rem;
 }
 .form-check-input {
-    margin-top: .5rem;
+    margin-top: 0.5rem;
 }
 
-form .error{
+form .error {
     color: #ff0000;
+}
+
+div.actions > a {
+    margin-bottom: 1rem;
+}
+
+a:last-child {
+    margin-bottom: 0 !important;
 }

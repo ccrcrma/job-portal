@@ -1,17 +1,14 @@
 @model PostEditViewModel
-@{
-    ViewBag.Title = "Edit post";
-}
+@{ ViewBag.Title = "Edit post"; }
 
 <h2>Edit new Post</h2>
-
 
 <form asp-action="Edit" asp-controller="Post" asp-route-id="@Model.Id" enctype="multipart/form-data">
     <div class="form-group">
         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
         <div class="form-group">
             <label asp-for="Title" class="form-label"></label>
-            <input asp-for="Title" class="form-control">
+            <input asp-for="Title" class="form-control" />
             <span class="text-danger" asp-validation-for="Title"></span>
         </div>
         <div class="form-group">
@@ -21,28 +18,28 @@
         </div>
         <div class="form-group">
             <label asp-for="Status" class="form-label"></label>
-            <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<PublishedStatus>()"></select>
+            <select asp-for="Status" class="form-control"
+                asp-items="Html.GetEnumSelectList<PublishedStatus>()"></select>
             <span class="text-danger" asp-validation-for="Status"></span>
         </div>
         <div class="d-flex flex-column">
             @if(!string.IsNullOrEmpty(Model.ImagePath)){
-                <div>
-                    <p>Current Picture</p>
-                    <img src="~/@Model.ImagePath">
-                </div>
+            <div>
+                <p>Current Picture</p>
+                <img src="~/@Model.ImagePath" />
+            </div>
             }
             <div class="form-group">
                 <label asp-for="FormFile" class="form-label"></label>
-                <input asp-for="FormFile" class="form-control">
+                <input asp-for="FormFile" class="form-control" />
                 <span class="text-danger" asp-validation-for="FormFile"></span>
             </div>
         </div>
 
         <button type="submit" class="btn btn-primary bg-primary">Edit</button>
-  
     </div>
 </form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"></partial>
-} 
+}

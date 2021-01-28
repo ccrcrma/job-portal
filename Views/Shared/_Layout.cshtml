@@ -1,10 +1,5 @@
-﻿@{
-    Layout = "";
-}
-
-<!doctype html>
+﻿<!doctype html>
 <html class="no-js" lang="zxx">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -59,9 +54,21 @@
                                     </nav>
                                 </div>
                                 <!-- Header-btn -->
-                                <button class="btn" data-toggle="modal" data-target="#login-modal">
-                                    Login
-                                </button>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <form asp-action="Logout" asp-controller="Account" asp-area="Identity">
+                                        <button class="btn" type="submit">
+                                            Logout
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <button class="btn" data-toggle="modal" data-target="#login-modal">
+                                        LogIn
+                                    </button>
+                                }
+
                             </div>
                         </div>
                         <!-- Mobile Menu -->
