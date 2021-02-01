@@ -187,7 +187,7 @@ namespace job_portal.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailAsync(int id)
         {
-            var job = await _context.Jobs.IgnoreQueryFilters().FirstOrDefaultAsync(j => j.Id == id);
+            var job = await _context.Jobs.FirstOrDefaultAsync(j => j.Id == id);
             if (job == null) return NotFound();
             return View(job);
         }

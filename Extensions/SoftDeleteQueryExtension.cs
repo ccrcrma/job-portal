@@ -24,6 +24,7 @@ namespace job_portal.Extensions.SoftDeleteQueryExtension
             where TEntity : class, ISoftDelete
         {
             Expression<Func<TEntity, bool>> filter = x => !x.IsSoftDeleted;
+            
             return filter;
         }
     }

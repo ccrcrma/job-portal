@@ -34,12 +34,12 @@ namespace job_portal.Models
             }
         }
         public JobType Type { get; set; }
-        public JobCategory Category { get; set; }
+        public virtual JobCategory Category { get; set; }
         public string Description { get; set; }
         public int Vacancy { get; set; }
         public DateTime Deadline { get; set; }
         public int ExperienceRequired { get; set; }
-        public bool IsSoftDeleted { get ; set; }
+        public bool IsSoftDeleted { get; set; }
 
         public JobViewModel ToViewModel()
         {

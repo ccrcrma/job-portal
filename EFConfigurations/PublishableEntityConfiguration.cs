@@ -9,12 +9,12 @@ namespace job_portal.EFConfigurations
     {
         public override void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            base.Configure(builder);
             builder.Property(publishableEntity => publishableEntity.Status)
                 .HasColumnType("tinyint")
                 .IsRequired()
                 .HasDefaultValue(PublishedStatus.Draft);
             builder.HasQueryFilter(p => p.Status == PublishedStatus.Live);
+            base.Configure(builder);
 
         }
     }

@@ -14,7 +14,7 @@ namespace job_portal.Areas.Administration.Models
         public int Id { get; set; }
         public string Title { get; set; }
         public string Body { get; set; }
-        public List<Tag> Tags { get; set; } = new List<Tag>();
+        public virtual List<Tag> Tags { get; set; } = new List<Tag>();
         public string ImageName { get; set; }
         public string ImagePath
         {

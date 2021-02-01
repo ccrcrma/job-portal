@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Twilio;
 
 namespace job_portal
 {
@@ -71,6 +72,12 @@ namespace job_portal
             services.AddSingleton<IMailService, MailService>();
             Task.Run(() => new SeedData(services.BuildServiceProvider()).SeedAll());
             services.AddSingleton<IFileStorageService, FileStorageService>();
+
+            var accountSid = Configuration["Twilio:AccountSID"];
+            var authToken = Configuration["Twilio:AuthToken"];
+            TwilioClient.Init(accountSid, authToken);
+            services.Configure<TwilioVerifySettings>(Configuration.GetSection("Twilio"));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

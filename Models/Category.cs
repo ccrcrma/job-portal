@@ -11,7 +11,7 @@ namespace job_portal.Models
     }
     public class JobCategory : Category
     {
-        public List<Job> Jobs { get; set; }
+        public virtual List<Job> Jobs { get; set; }
 
     }
 

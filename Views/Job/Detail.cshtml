@@ -1,4 +1,5 @@
 @model Job
+@inject UserManager<ApplicationUser> _userManager
 @{
     Layout = "/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Detail";
@@ -8,8 +9,8 @@
 }
 @await Html.PartialAsync("_MailModalPartial", partialVm)
 <!-- job post company Start -->
-<div class="job-post-company pt-120 pb-120">
-    <div class="container">
+<div class="container my-5">
+    <div class="job-post-company">
         <div class="row justify-content-between">
             <!-- Left Content -->
             <div class="col-xl-7 col-lg-8">
@@ -33,43 +34,43 @@
                 </div>
                 <!-- job single End -->
 
-                <div class="job-post-details">
-                    <div class="post-details1 mb-50">
-                        <!-- Small Section Tittle -->
-                        <div class="small-section-tittle d-flex vertical-align-middle">
-                            <h4>Job Description</h4>
-                            <a data-toggle="modal" data-target="#email-modal" class="d-block ml-auto"><i
-                                    class="fas fa-envelope text-success" style="font-size: 1.5rem;"></i></a>
-                        </div>
-                        <p>@Model.Description</p>
+            <div class="job-post-details">
+                <div class="post-details1 mb-50">
+                    <!-- Small Section Tittle -->
+                    <div class="small-section-tittle d-flex vertical-align-middle">
+                        <h4>Job Description</h4>
+                        <a data-toggle="modal" data-target="#email-modal" class="d-block ml-auto"><i
+                                class="fas fa-envelope text-success" style="font-size: 1.5rem;"></i></a>
                     </div>
-                    <div class="post-details2  mb-50">
-                        <!-- Small Section Tittle -->
-                        <div class="small-section-tittle">
-                            <h4>Required Knowledge, Skills, and Abilities</h4>
-                        </div>
-                        <ul>
-                            <li>System Software Development</li>
-                            <li>Mobile Applicationin iOS/Android/Tizen or other platform</li>
-                            <li>Research and code , libraries, APIs and frameworks</li>
-                            <li>Strong knowledge on software development life cycle</li>
-                            <li>Strong problem solving and debugging skills</li>
-                        </ul>
-                    </div>
-                    <div class="post-details2  mb-50">
-                        <!-- Small Section Tittle -->
-                        <div class="small-section-tittle">
-                            <h4>Education + Experience</h4>
-                        </div>
-                        <ul>
-                            <li>3 or more years of professional design experience</li>
-                            <li>Direct response email experience</li>
-                            <li>Ecommerce website design experience</li>
-                            <li>Familiarity with mobile and web apps preferred</li>
-                            <li>Experience using Invision a plus</li>
-                        </ul>
-                    </div>
+                    <p>@Model.Description</p>
                 </div>
+                <div class="post-details2  mb-50">
+                    <!-- Small Section Tittle -->
+                    <div class="small-section-tittle">
+                        <h4>Required Knowledge, Skills, and Abilities</h4>
+                    </div>
+                    <ul>
+                        <li>System Software Development</li>
+                        <li>Mobile Applicationin iOS/Android/Tizen or other platform</li>
+                        <li>Research and code , libraries, APIs and frameworks</li>
+                        <li>Strong knowledge on software development life cycle</li>
+                        <li>Strong problem solving and debugging skills</li>
+                    </ul>
+                </div>
+                <div class="post-details2  mb-50">
+                    <!-- Small Section Tittle -->
+                    <div class="small-section-tittle">
+                        <h4>Education + Experience</h4>
+                    </div>
+                    <ul>
+                        <li>3 or more years of professional design experience</li>
+                        <li>Direct response email experience</li>
+                        <li>Ecommerce website design experience</li>
+                        <li>Familiarity with mobile and web apps preferred</li>
+                        <li>Experience using Invision a plus</li>
+                    </ul>
+                </div>
+            </div>
 
             </div>
             <!-- Right Content -->
@@ -89,8 +90,24 @@
                     </ul>
                     <div class="actions d-flex flex-column">
                         <a href="#" class="btn bg-warning">Visit Company Page</a>
-                        <a href="#" class="btn bg-success">Apply Now</a>
-                        <a href="#" class="btn bg-secondary">Save Job</a>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a href="#" class="btn bg-success">Apply Now</a>
+                            @if((await _userManager.GetUserAsync(User)).IsSaved(Model.Id))
+                            {
+                                <form asp-action="RemoveJob" data-action-type-save asp-controller="Seeker" asp-area="Seeker">
+                                    <input type="hidden" name="jobId" value="@Model.Id">
+                                    <button type="submit" name="save-unsave-button" class="btn bg-danger w-100">Remove Job</button>
+                                </form>
+                            }else
+                            {
+                                <form asp-action="SaveJob" asp-controller="Seeker" asp-area="Seeker" data-action-type-save>
+                                    <input type="hidden" name="jobId" value="@Model.Id">
+                                    <button type="submit" name="save-unsave-button" class="btn bg-secondary w-100">Save Job</button>
+                                </form>
+                            }
+                            
+                        }
                     </div>
                 </div>
                 <div class="post-details4  mb-50">
@@ -113,3 +130,48 @@
     </div>
 </div>
 <!-- job post company End -->
+
+
+@section Scripts{
+    <script>
+        async function SaveUnsaveJob(url, data){
+            var response = await fetch(url, {body: data,method: "POST"})
+                body =  await response.json();
+                status = response.status
+                return {body,status}
+        }
+        var saveUnsaveForm = document.querySelector("form[data-action-type-save]");
+        if(saveUnsaveForm){
+            saveUnsaveForm.onsubmit = async function(event){
+                event.preventDefault();
+                var url = event.target.getAttribute("action");
+                var data = new FormData(event.target);
+                var response = await SaveUnsaveJob(url,data);
+
+                if(response.status == 200){
+                    const {url,alertMessage,text} = response.body;
+                    saveUnsaveForm.setAttribute("action", url);
+                    var saveUnsaveButton = document.querySelector("button[name='save-unsave-button']");
+                    saveUnsaveButton.innerHTML = text;
+                    saveUnsaveButton.classList.toggle("bg-danger");
+                    saveUnsaveButton.classList.toggle("bg-secondary");
+                    var alertWrapper = document.querySelector(".alert-wrapper");
+                    if(alertWrapper !=null){
+                        alertWrapper.parentNode.removeChild(alertWrapper);
+                    }
+                    alertWrapper = document.createElement("div");
+                    alertWrapper.classList.add("alert-wrapper");
+                    var alertType = saveUnsaveButton.classList.contains("bg-danger") ? "alert-success": "alert-danger";
+                    alertWrapper.innerHTML = `
+                    <div class="alert alert-success ${alertType} fade show" role="alert">
+                        <strong>Holy guacamole!</strong> ${alertMessage}.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"> &times;</button>
+                    </div>`
+                    var alertContainer = document.querySelector("main .container")
+                    alertContainer.insertBefore(alertWrapper, alertContainer.firstChild);
+                }
+
+            }
+        }
+    </script>
+}

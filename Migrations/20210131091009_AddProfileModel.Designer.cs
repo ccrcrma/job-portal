@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using job_portal.Data;
 
 namespace job_portal.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20210131091009_AddProfileModel")]
+    partial class AddProfileModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -336,13 +338,10 @@ namespace job_portal.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Address")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Bio")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Experience")
+                    b.Property<string>("Description")
                         .HasColumnType("longtext");
 
                     b.Property<string>("ImageName")

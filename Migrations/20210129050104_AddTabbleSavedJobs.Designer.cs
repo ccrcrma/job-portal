@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using job_portal.Data;
 
 namespace job_portal.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20210129050104_AddTabbleSavedJobs")]
+    partial class AddTabbleSavedJobs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -330,37 +332,6 @@ namespace job_portal.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("job_portal.Areas.Identity.Models.Profile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Bio")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Experience")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ImageName")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Profile");
-                });
-
             modelBuilder.Entity("job_portal.Areas.Identity.Models.SavedJob", b =>
                 {
                     b.Property<string>("UserId")
@@ -550,15 +521,6 @@ namespace job_portal.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("job_portal.Areas.Identity.Models.Profile", b =>
-                {
-                    b.HasOne("job_portal.Areas.Identity.Models.ApplicationUser", null)
-                        .WithOne("Profile")
-                        .HasForeignKey("job_portal.Areas.Identity.Models.Profile", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("job_portal.Areas.Identity.Models.SavedJob", b =>
                 {
                     b.HasOne("job_portal.Models.Job", "Job")
@@ -591,8 +553,6 @@ namespace job_portal.Migrations
 
             modelBuilder.Entity("job_portal.Areas.Identity.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("Profile");
-
                     b.Navigation("SavedJobs");
                 });
 

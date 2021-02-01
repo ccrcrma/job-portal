@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using job_portal.Areas.Administration.Models;
 using job_portal.Areas.Identity.Models;
 using job_portal.EFConfigurations;
+using job_portal.Extensions;
 using job_portal.Extensions.SoftDeleteQueryExtension;
 using job_portal.Interfaces;
 using job_portal.Models;
@@ -26,10 +27,13 @@ namespace job_portal.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Job> Jobs { get; set; }
 
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information);
+            optionsBuilder
+                .UseLazyLoadingProxies()
+                .LogTo(Console.WriteLine, LogLevel.Information);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -64,19 +68,39 @@ namespace job_portal.Data
             modelBuilder.ApplyConfiguration(new PostConfiguration());
             modelBuilder.ApplyConfiguration(new JobConfiguration());
 
+            modelBuilder.ApplyConfiguration(new ProfileConfiguration());
+
             modelBuilder.Entity<ApplicationUser>(applicationUser =>
             {
                 applicationUser.Property(u => u.FirstName).IsRequired().HasMaxLength(100);
                 applicationUser.Property(u => u.LastName).IsRequired().HasMaxLength(100);
                 applicationUser.Property(u => u.MiddleName).HasMaxLength(100);
                 applicationUser.Property(u => u.DOB).IsRequired().HasColumnType("date");
-                applicationUser.Property(u => u.Gender).IsRequired().HasColumnType("tinyint(2)") .HasMaxLength(100);
+                applicationUser.Property(u => u.Gender).IsRequired().HasColumnType("tinyint(2)").HasMaxLength(100);
 
+            });
+
+            modelBuilder.Entity<SavedJob>(sj =>
+            {
+                sj.Property(sj => sj.AddedAt).IsRequired().HasColumnType("timestamp").HasDefaultValueSql("CURRENT_TIMESTAMP");
+                sj.HasOne<ApplicationUser>(sj => sj.User)
+                    .WithMany(u => u.SavedJobs)
+                    .HasForeignKey(sj => sj.UserId)
+                    .IsRequired();
+                sj.HasOne<Job>(sj => sj.Job)
+                    .WithMany()
+                    .HasForeignKey(sj => sj.JobId)
+                    .IsRequired();
+                sj.HasKey(sj => new { sj.UserId, sj.JobId });
             });
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+                if (entityType.ClrType.IsSubclassOf(typeof(PublishableEntity)) && typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+                {
+                    entityType.AddSoftDeleteAndPublishedQueryFilter();
+                }
+                else if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
                 {
                     entityType.AddSoftDeleteQueryFilter();
                 }

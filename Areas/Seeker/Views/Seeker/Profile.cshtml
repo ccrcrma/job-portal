@@ -1,0 +1,166 @@
+@model ApplicationUser
+@{
+    ViewBag.Title = "Profile";
+    var pictureModel = new PictureViewModel();
+    var basicProfileInfoVm = Model.GetProfileInfo();
+    }
+
+<h2>User Profile </h2>
+<div class="row bg-light pt-3">
+    <div class="col-md-4 mb-3">
+        @if(!string.IsNullOrEmpty(Model.Profile.ImagePath)){
+            <img src="~/@Model.Profile.ImagePath" class="img-profile" alt="your current profile picture" id ="profile-pic">
+
+        }else {
+            <img src="~/img/team/2.png" class="img-profile" alt="default picture" id="profile-pic">
+        }
+        <div class="card my-3">
+            <div class="card-header">
+                <h5 class="card-title">Update Profile Picture</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Picture" enctype="multipart/form-data" 
+                    data-ajax="true"
+                    data-ajax-complete="pictureCallback">
+                    <div class="form-group" id="picture-form-container">
+                        @{await Html.RenderPartialAsync("_FormFilePartial",pictureModel);}
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-success d-block ml-auto">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="picture-update-success">
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title">Update your profile</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="ProfileInfo" data-ajax="true" data-ajax-complete="profileInfoCallback" >
+                    @{await Html.RenderPartialAsync("_BasicProfileInfo",basicProfileInfoVm);}
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">
+                    About You
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row form-group">
+                    <label for="Name" class="form-label col-sm-4">Full Name</label>
+                    <input type="text" readonly value="Shishir Sharma" class="col-sm-8 form-control">
+                    <span class="text-danger"></span>
+                </div>
+
+                <div class="form-group row">
+                    <label for="Name" class="form-label col-sm-4">Email</label>
+                    <input type="text" readonly value="random@Random.com" class="form-control col-sm-8">
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group row">
+                    <label for="Name" class="form-label col-sm-4">Address</label>
+                    <input type="text" readonly value="google hq" class="form-control col-sm-8">
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group row">
+                    <label for="Name" class="form-label col-sm-4">Gender</label>
+                    <input type="text" readonly value="Male" class="form-control col-sm-8">
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group row">
+                    <label for="member-on" class="form-label col-sm-4">Member On</label>
+                    <input type="date" class="form-control col-sm-8" value="2020-01-30" readonly>
+                    <span class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <a href="#">cover letter</a>
+                </div>
+                <div class="form-group">
+                    <a href="#">resume</a>
+
+                </div>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">
+                    Update coverletter
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <input type="file" class="form-control">
+                </div>
+                <div class="form-group d-flex">
+                    <button class="btn btn-success ml-auto" type="submit">Update</button>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">
+                    Update resume
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <input type="file" class="form-control">
+                </div>
+                <div class="form-group d-flex">
+                    <button class="btn btn-success ml-auto" type="submit">Update</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial"></partial>
+    <partial name="_AjaxPartial"></partial>
+    <script>
+        function changeImageSrc(imageElement, newFileName){
+            var currentSrc = imageElement.getAttribute("src");
+            console.log(currentSrc);
+            var srcArray = currentSrc.split("/");
+            srcArray[3] = newFileName;
+            var newSrc = srcArray.join("/");
+            imageElement.setAttribute("src", newSrc)
+        }
+        pictureCallback = function(xhr){
+            switch(xhr.status){
+                case 200:
+                    document.getElementById("picture-update-success").innerHTML  = 
+                    `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Holy guacamole!</strong> Profile Picture updated Successfully.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    </div>`
+                    var profileImage = document.getElementById("profile-pic");
+                    const {fileName} = xhr.responseJSON;
+                    changeImageSrc(profileImage, fileName);
+                    break;
+                case 400:
+                    document.getElementById("picture-form-container").innerHTML = xhr.responseText;
+                    break;
+
+            }
+        }
+
+        profileInfoCallback = function(xhr){
+            console.log(xhr);
+        }
+    </script>
+}
