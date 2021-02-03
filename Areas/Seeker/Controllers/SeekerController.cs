@@ -13,6 +13,12 @@ using job_portal.Services;
 using job_portal.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using System.Net;
+using System;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using System.Dynamic;
 
 namespace job_portal.Areas.Seeker.Controllers
 {
@@ -24,16 +30,22 @@ namespace job_portal.Areas.Seeker.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IFileStorageService _fileStorageService;
         private readonly ILogger<SeekerController> _logger;
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
 
         public SeekerController(ApplicationContext context,
          UserManager<ApplicationUser> userManager,
          IFileStorageService fileStorageService,
-         ILogger<SeekerController> logger)
+         ILogger<SeekerController> logger,
+         IWebHostEnvironment environment,
+         IConfiguration configuration)
         {
             _context = context;
             _userManager = userManager;
             _fileStorageService = fileStorageService;
             _logger = logger;
+            _configuration = configuration;
+            _environment = environment;
         }
 
         [HttpGet]
@@ -119,21 +131,27 @@ namespace job_portal.Areas.Seeker.Controllers
             user.Profile.Bio = vm.Bio;
             user.Profile.Experience = vm.Experience;
             user.Profile.Address = vm.Address;
-            var phoneNumber = string.Join("", vm.PhoneNumber.Split("-"));
-            user.PhoneNumber = "+977" + phoneNumber;
-            var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, phoneNumber);
+            // var newPhoneNumber = string.Join("", vm.PhoneNumber.Split("-"));
+            // newPhoneNumber = "+977" + newPhoneNumber;
+            var oldNumber = user.PhoneNumber;
+            user.PhoneNumber = vm.PhoneNumber;
+            if (oldNumber != vm.PhoneNumber)
+            {
+                user.PhoneNumberConfirmed = false;
+                await _context.SaveChangesAsync();
+                return new OkObjectResult(new { RedirectUrl = ("/account/VerifyPhone") });
+            }
 
-            _logger.LogInformation(token);
             await _context.SaveChangesAsync();
             return new OkResult();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PictureAsync(PictureViewModel vm)
+        public async Task<IActionResult> UploadPictureAsync(ImageFormFileViewModel vm)
         {
             if (!ModelState.IsValid)
             {
-                var result = PartialView("_FormFilePartial", vm);
+                var result = PartialView("_ImageFormFilePartial", vm);
                 result.StatusCode = Microsoft.AspNetCore.Http.StatusCodes.Status400BadRequest;
                 return result;
             }
@@ -150,6 +168,69 @@ namespace job_portal.Areas.Seeker.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { FileName = fileName });
 
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadDocumentAsync(FormFileViewModel vm)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _context.Users.Include(u => u.Profile).FirstOrDefaultAsync(u => u.Id == userId);
+            if (!ModelState.IsValid)
+            {
+                var result = PartialView("_FormFilePartial", vm);
+                result.StatusCode = Microsoft.AspNetCore.Http.StatusCodes.Status400BadRequest;
+                return result;
+            }
+            string BaseDirctory;
+            dynamic returnObject = new ExpandoObject();
+            switch (vm.Document)
+            {
+                case "resume":
+                    BaseDirctory = _configuration["Documents:Resume"];
+                    _fileStorageService.DeleteFile(user.Profile?.ResumePath);
+                    user.Profile.Resume = await _fileStorageService.SaveFileAsync(vm.FormFile, BaseDirctory);
+                    returnObject.fileName = user.Profile.Resume;
+                    user.Profile.ResumeOriginalName = WebUtility.HtmlEncode(vm.FormFile.FileName);
+                    returnObject.originalFileName = user.Profile.ResumeOriginalName;
+                    break;
+                case "coverLetter":
+                    BaseDirctory = _configuration["Documents:CoverLetter"];
+                    _fileStorageService.DeleteFile(user.Profile?.CoverLetterPath);
+                    user.Profile.CoverLetter = await _fileStorageService.SaveFileAsync(vm.FormFile, BaseDirctory);
+                    returnObject.fileName = user.Profile.CoverLetter;
+                    user.Profile.CoverLetterOriginalName = WebUtility.HtmlEncode(vm.FormFile.FileName);
+                    returnObject.originalFileName = user.Profile.CoverLetterOriginalName;
+                    break;
+            }
+            await _context.SaveChangesAsync();
+            return Ok(returnObject);
+        }
+
+        [HttpGet("download")]
+        public IActionResult DownloadFile(string fileName, string documentType, string originalFileName)
+        {
+            if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(documentType))
+            {
+                return BadRequest();
+            }
+            string FilePath;
+            string BaseDirectory;
+            switch (documentType)
+            {
+                case "cv":
+                    BaseDirectory = _configuration["Documents:Resume"];
+                    FilePath = Path.Combine(BaseDirectory, fileName);
+                    FilePath = "~/" + FilePath;
+                    return File(FilePath, "application/pdf", WebUtility.HtmlDecode(originalFileName));
+                case "cover-letter":
+                    BaseDirectory = _configuration["Documents:CoverLetter"];
+                    FilePath = Path.Combine(BaseDirectory, fileName);
+                    FilePath = "~/" + FilePath;
+                    return File(FilePath, "application/pdf", WebUtility.HtmlDecode(originalFileName));
+                default:
+                    return BadRequest();
+            }
         }
     }
 }

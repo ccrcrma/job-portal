@@ -14,6 +14,8 @@ namespace job_portal.Areas.Identity.Models
         public DateTime DOB { get; set; }
         public Gender Gender { get; set; }
         public string MiddleName { get; set; }
+        public DateTime CreatedOn { get; set; }
+        
         public string Name
         {
             get

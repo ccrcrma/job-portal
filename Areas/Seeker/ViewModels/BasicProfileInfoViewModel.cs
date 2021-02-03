@@ -9,7 +9,7 @@ namespace job_portal.Areas.Seeker.ViewModels
         [Required(ErrorMessage = "{0} is Required")]
 
         [DataType(DataType.PhoneNumber)]
-        [RegularExpression("98[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}", ErrorMessage ="Phone Number Format 9812-23-24-24")]
+        [RegularExpression("^\\+(?:[0-9]●?){6,14}[0-9]$", ErrorMessage = "NumberFormat eg:+9779812345678")]
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "{0} is Required")]

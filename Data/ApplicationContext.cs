@@ -27,7 +27,6 @@ namespace job_portal.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Job> Jobs { get; set; }
 
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
@@ -77,6 +76,7 @@ namespace job_portal.Data
                 applicationUser.Property(u => u.MiddleName).HasMaxLength(100);
                 applicationUser.Property(u => u.DOB).IsRequired().HasColumnType("date");
                 applicationUser.Property(u => u.Gender).IsRequired().HasColumnType("tinyint(2)").HasMaxLength(100);
+                applicationUser.Property(u => u.CreatedOn).IsRequired().HasColumnType("timestamp").HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             });
 

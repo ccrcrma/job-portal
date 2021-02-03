@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using job_portal.Areas.Identity.Models;
 using job_portal.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -8,15 +9,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 using Twilio.Rest.Verify.V2.Service;
 
-namespace job_portal.Areas.Identity.Pages.VerifyPhone.Mode
+namespace job_portal.Areas.Identity.Pages.Account
 {
     [Authorize]
+
     public class VerifyPhoneModel : PageModel
     {
         private readonly TwilioVerifySettings _settings;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public VerifyPhoneModel(IOptions<TwilioVerifySettings> settings, UserManager<IdentityUser> userManager)
+        public VerifyPhoneModel(IOptions<TwilioVerifySettings> settings, UserManager<ApplicationUser> userManager)
         {
             _settings = settings.Value;
             _userManager = userManager;

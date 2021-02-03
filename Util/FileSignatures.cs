@@ -22,6 +22,11 @@ namespace job_portal.Util
                     new byte[]{0xFF, 0xD8, 0xFF, 0xE1},
                     new byte[]{0xFF, 0xD8, 0xFF, 0xE8},
                 }
+            },
+            {".pdf", new List<byte[]>
+                {
+                    new byte[]{0x25, 0x50, 0x44, 0x46}
+                }
             }
         };
     }

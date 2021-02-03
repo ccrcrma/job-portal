@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using job_portal.Areas.Identity.Models;
+using job_portal.Areas.Identity.Pages.Conventions;
 using job_portal.Data;
 using job_portal.Extensions;
 using job_portal.Services;
@@ -34,6 +35,10 @@ namespace job_portal
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddRazorPages(options =>
+            {
+                options.Conventions.Add(new CustomPageRouteModelConvention());
+            });
             services.AddDbContext<ApplicationContext>(
                 dbContextOptions => dbContextOptions
                     .UseMySql(
@@ -117,7 +122,6 @@ namespace job_portal
 
             app.UseEndpoints(endpoints =>
             {
-
                 endpoints.MapAreaControllerRoute(
                     name: "post",
                     areaName: "Administration",
@@ -165,7 +169,7 @@ namespace job_portal
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Home}/{id?}");
-
+                endpoints.MapRazorPages();
             });
 
         }

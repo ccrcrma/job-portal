@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Http;
 
 namespace job_portal.Areas.Seeker.ViewModels
 {
-    public class PictureViewModel
+    public class FormFileViewModel
     {
         [Required]
-        [MaxFileSize(2000)]
-        [AllowedFileExtension(".png", ".jpg", ".jpeg")]
+        [MaxFileSize(3000)]
+        [AllowedFileExtension(".pdf")]
         [ValidateFileSignature]
         public IFormFile FormFile { get; set; }
-
+        public string Document { get; set; }
     }
 }

@@ -1,8 +1,9 @@
 @model ApplicationUser
 @{
     ViewBag.Title = "Profile";
-    var pictureModel = new PictureViewModel();
+    var pictureModel = new ImageFormFileViewModel();
     var basicProfileInfoVm = Model.GetProfileInfo();
+    var formFileModel = new FormFileViewModel();
     }
 
 <h2>User Profile </h2>
@@ -19,11 +20,11 @@
                 <h5 class="card-title">Update Profile Picture</h5>
             </div>
             <div class="card-body">
-                <form asp-action="Picture" enctype="multipart/form-data" 
+                <form asp-action="UploadPicture" enctype="multipart/form-data" 
                     data-ajax="true"
                     data-ajax-complete="pictureCallback">
                     <div class="form-group" id="picture-form-container">
-                        @{await Html.RenderPartialAsync("_FormFilePartial",pictureModel);}
+                        @{await Html.RenderPartialAsync("_ImageFormFilePartial",pictureModel);}
                     </div>
                     <div>
                         <button type="submit" class="btn btn-success d-block ml-auto">Update</button>
@@ -41,12 +42,17 @@
             </div>
             <div class="card-body">
                 <form asp-action="ProfileInfo" data-ajax="true" data-ajax-complete="profileInfoCallback" >
-                    @{await Html.RenderPartialAsync("_BasicProfileInfo",basicProfileInfoVm);}
+                    <div id="profile-form-container">
+                        @{await Html.RenderPartialAsync("_BasicProfileInfo",basicProfileInfoVm);}
+                    </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-success">Update</button>
                     </div>
                 </form>
             </div>
+        </div>
+        <div id="profile-success-container">
+
         </div>
     </div>
     <div class="col-md-4 mb-3">
@@ -59,37 +65,46 @@
             <div class="card-body">
                 <div class="row form-group">
                     <label for="Name" class="form-label col-sm-4">Full Name</label>
-                    <input type="text" readonly value="Shishir Sharma" class="col-sm-8 form-control">
+                    <input type="text" readonly value="@Model.Name" class="col-sm-8 form-control">
                     <span class="text-danger"></span>
                 </div>
 
                 <div class="form-group row">
                     <label for="Name" class="form-label col-sm-4">Email</label>
-                    <input type="text" readonly value="random@Random.com" class="form-control col-sm-8">
+                    <input type="text" readonly value="@Model.Email" class="form-control col-sm-8">
                     <span class="text-danger"></span>
                 </div>
                 <div class="form-group row">
                     <label for="Name" class="form-label col-sm-4">Address</label>
-                    <input type="text" readonly value="google hq" class="form-control col-sm-8">
+                    <input type="text" readonly value="@Model.Profile.Address" class="form-control col-sm-8">
                     <span class="text-danger"></span>
                 </div>
                 <div class="form-group row">
                     <label for="Name" class="form-label col-sm-4">Gender</label>
-                    <input type="text" readonly value="Male" class="form-control col-sm-8">
+                    <input type="text" readonly value="@Model.Gender" class="form-control col-sm-8">
                     <span class="text-danger"></span>
                 </div>
                 <div class="form-group row">
                     <label for="member-on" class="form-label col-sm-4">Member On</label>
-                    <input type="date" class="form-control col-sm-8" value="2020-01-30" readonly>
+                    <input type="date" class="form-control col-sm-8" value="@Model.CreatedOn.ToString("yyyy-MM-dd")" readonly>
                     <span class="text-danger"></span>
                 </div>
-
                 <div class="form-group">
-                    <a href="#">cover letter</a>
+                    <a 
+                        data-document-type="cover-letter"
+                        asp-action="DownloadFile" 
+                        asp-route-fileName="@Model.Profile?.CoverLetter"
+                        asp-route-originalFileName="@Model.Profile?.CoverLetterOriginalName",
+                        asp-route-documentType="cover-letter">cover letter</a>
+
                 </div>
                 <div class="form-group">
-                    <a href="#">resume</a>
-
+                    <a  
+                        data-document-type="cv"
+                        asp-action="DownloadFile"
+                        asp-route-fileName="@Model.Profile?.Resume"
+                        asp-route-originalFileName="@Model.Profile?.ResumeOriginalName"
+                        asp-route-documentType="cv">resume</a>
                 </div>
             </div>
         </div>
@@ -100,11 +115,21 @@
                 </h5>
             </div>
             <div class="card-body">
-                <div class="form-group">
-                    <input type="file" class="form-control">
-                </div>
-                <div class="form-group d-flex">
-                    <button class="btn btn-success ml-auto" type="submit">Update</button>
+                <form asp-action="UploadDocument" enctype="multipart/form-data"
+                    data-ajax="true"
+                    data-ajax-complete="coverLetterAjaxCallback" >
+                    <div 
+                        class="form-group"
+                        id="cover-letter-form-container">
+                        @{await Html.RenderPartialAsync("_FormFilePartial", formFileModel);}
+                    </div>
+                    <div class="form-group d-flex">
+                        <input type="hidden" name="document" value="coverLetter">
+                        <button class="btn btn-success ml-auto" type="submit">Update</button>
+                    </div>
+                </form>
+                <div id="cover-letter-alert-container">
+
                 </div>
             </div>
         </div>
@@ -115,13 +140,18 @@
                 </h5>
             </div>
             <div class="card-body">
-                <div class="form-group">
-                    <input type="file" class="form-control">
+                <form asp-action="UploadDocument" enctype="multipart/form-data" 
+                    data-ajax="true" data-ajax-complete="resumeAjaxCallback">
+                    <div class="form-group" id="resume-form-container">
+                        @{await Html.RenderPartialAsync("_FormFilePartial", formFileModel);}
+                    </div>
+                    <div class="form-group d-flex">
+                        <input type="hidden" name="document" value="resume">
+                        <button class="btn btn-success ml-auto" type="submit">Update</button>
+                    </div>
+                </form>
+                <div id="resume-alert-container">
                 </div>
-                <div class="form-group d-flex">
-                    <button class="btn btn-success ml-auto" type="submit">Update</button>
-                </div>
-
             </div>
         </div>
     </div>
@@ -159,8 +189,83 @@
             }
         }
 
+        function changeBrowserUrl(url){
+            window.location.href = url;
+        }
+
         profileInfoCallback = function(xhr){
-            console.log(xhr);
+            switch(xhr.status){
+                case 200:
+                    document.getElementById("profile-success-container").innerHTML  = 
+                    `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Holy guacamole!</strong> Info updated Successfully.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    </div>`
+                    var body = xhr.responseJSON;
+                    if(body !=undefined){
+                        const {redirectUrl} = body;
+                        setTimeout(function(){
+                            changeBrowserUrl(redirectUrl);
+                        }, 1000);
+                    }
+
+                break;
+                case 400:
+                    document.getElementById("profile-form-container").innerHTML= xhr.responseText;
+                    break;
+            }
+        }
+
+        function uploadLinkUrl(linkDataSetValue, responseData){
+            var elem= document.querySelector(`a[data-document-type="${linkDataSetValue}"]`);
+            var relativeUrl = elem.getAttribute("href");
+            var pathUrl = relativeUrl.substring(0, relativeUrl.indexOf("?"));
+            var queryParams = relativeUrl.substring(relativeUrl.indexOf("?")+1);
+            var searchParams =  new URLSearchParams(queryParams);
+            for(const propery in responseData){
+                searchParams.set(propery, responseData[propery]);
+            }
+            console.log(searchParams.toString());
+            var url = pathUrl + "?" + searchParams.toString();
+            elem.setAttribute("href", url);
+
+        }
+
+        function AfterFileUploadTask(xhr, data){
+            console.log(xhr.responseJSON);
+            const {alertContainer, successMessage, formContainer} = data;
+            switch(xhr.status){
+                case 200:
+                    document.getElementById(alertContainer).innerHTML  = 
+                    `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Holy guacamole!</strong> ${successMessage}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    </div>`
+                uploadLinkUrl(data.dataActionType, xhr.responseJSON);
+                break;
+                case 400:
+                    document.getElementById(formContainer).innerHTML= xhr.responseText;
+                    break;
+                }
+            
+            }
+        resumeAjaxCallback = function(xhr){
+            AfterFileUploadTask(xhr,{
+                alertContainer:"resume-alert-container",
+                successMessage:"resume updated Successfully.",
+                formContainer:"resume-form-container",
+                dataActionType:"cv"
+                });
+            }
+
+        coverLetterAjaxCallback = function(xhr){
+            AfterFileUploadTask(xhr, {
+                alertContainer:"cover-letter-alert-container",
+                successMessage: "cover letter updated successfully.",
+                formContainer:"cover-letter-form-container",
+                dataActionType:"cover-letter"
+            });
+
         }
     </script>
 }
