@@ -11,7 +11,17 @@ namespace job_portal
                 return subString;
             }
             return input;
-
         }
+        public static string Hyphenate(this string input)
+        {
+            return input.Replace(' ', '-');
+        }
+
+        public static string DeHyphenate(this string input)
+        {
+            return input.Replace('-', ' ');
+        }
+
+
     }
 }

@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace job_portal.Controllers
@@ -107,15 +108,14 @@ namespace job_portal.Controllers
                 SetCategories(vm);
                 return View(vm);
             }
+
             var model = vm.ToModel();
+            var companyName = ((ClaimsIdentity)User.Identity).GetSpecificClaim("CompanyName");
+            model.Company = await _context.Companies.FirstOrDefaultAsync(c => c.Name == companyName);
             await _context.Jobs.AddAsync(model);
             _context.Entry(model.Category).State = EntityState.Unchanged;
             await _context.SaveChangesAsync();
-
-            TempData["alert-type"] = "success";
-            TempData["alert-title"] = "congrats";
-            TempData["alert-message"] = "new job added";
-            return LocalRedirect("~/");
+            return RedirectToAction("Index", "Dashboard", new { area = "Employer" }).WithSuccess("congrats", "new job added");
         }
 
         [HttpGet]
@@ -187,7 +187,9 @@ namespace job_portal.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailAsync(int id)
         {
-            var job = await _context.Jobs.FirstOrDefaultAsync(j => j.Id == id);
+            var job = await _context.Jobs
+                .Include(job => job.Company)
+                .FirstOrDefaultAsync(j => j.Id == id);
             if (job == null) return NotFound();
             return View(job);
         }

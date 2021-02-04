@@ -1,15 +1,20 @@
 using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using job_portal.Areas.Identity.Models;
 using job_portal.Areas.Identity.ViewModels;
+using job_portal.Data;
 using job_portal.Extensions;
 using job_portal.Models;
 using job_portal.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace job_portal.Areas.Identity.Controllers
@@ -21,16 +26,20 @@ namespace job_portal.Areas.Identity.Controllers
         private readonly ILogger<AccountController> _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IMailService _mailService;
+        private readonly ApplicationContext _context;
 
-        public AccountController(UserManager<ApplicationUser> userManager,
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
             ILogger<AccountController> logger,
             SignInManager<ApplicationUser> signInManager,
-            IMailService mailService)
+            IMailService mailService,
+            ApplicationContext context)
         {
             _userManager = userManager;
             _logger = logger;
             _signInManager = signInManager;
             _mailService = mailService;
+            _context = context;
         }
 
         [HttpPost]
@@ -44,7 +53,11 @@ namespace job_portal.Areas.Identity.Controllers
                 var result = await _signInManager.PasswordSignInAsync(user, vm.Password, vm.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    return Ok(new { Url = "/" });
+                    if (_context.UserClaims.Any(c => c.UserId == user.Id && c.ClaimType == "CompanyName"))
+                    {
+                        return Ok(new { Url = Url.Action("Index", controller: "Dashboard", new { area = "Employer" }) });
+                    }
+                    return Ok(new { Url = Url.Action("Index", controller: "Seeker", new { area = "Seeker" }) });
                 }
                 else
                 {
@@ -274,10 +287,53 @@ namespace job_portal.Areas.Identity.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult RegisterEmployerUser(EmployerUserRegistrationViewModel vm)
+        public async Task<IActionResult> RegisterEmployerUserAsync(EmployerUserRegistrationViewModel vm)
         {
             if (!ModelState.IsValid) return View(vm);
-            return LocalRedirect("~/").WithSuccess("company account created successfully", string.Empty);
+            TextInfo info = new CultureInfo("en-us").TextInfo;
+            var companyNameTitleCalse = info.ToTitleCase(vm.CompanyName);
+            var company = await _context.Companies.FirstOrDefaultAsync(c => c.Name == companyNameTitleCalse);
+            if (company == null)
+            {
+                company = new Employer.Models.Company
+                {
+                    Name = companyNameTitleCalse
+                };
+                await _context.Companies.AddAsync(company);
+            }
+            var employerUser = new ApplicationUser()
+            {
+                Email = vm.Email,
+                UserName = vm.Email
+            };
+            var result = await _userManager.CreateAsync(employerUser, vm.Password);
+            if (result.Succeeded)
+            {
+                _logger.LogInformation("UserCreated Successfully");
+                var claim = new Claim("CompanyName", company.Name);
+                await _userManager.AddClaimAsync(employerUser, claim);
+                if (_userManager.Options.SignIn.RequireConfirmedEmail)
+                {
+                    await SendEmailConfirmationLinkAsync(employerUser);
+                    return RedirectToAction("RegisterConfirmation", new { email = vm.Email })
+                        .WithSuccess("New user created successfully", string.Empty);
+                }
+                else
+                {
+                    await _signInManager.SignInAsync(employerUser, isPersistent: false);
+                    return LocalRedirect("~/").WithSuccess("New user created and signed In ", string.Empty);
+                }
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return View(vm);
+            }
+
+            return LocalRedirect("~/").WithSuccess("employer account created successfully", string.Empty);
         }
 
         [HttpGet]

@@ -1,0 +1,76 @@
+@model CompanyViewModel
+@{
+    ViewBag.Title = "dashboard employee";
+}
+
+
+<h2>Many things coming soon</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <img src="" alt="current-logo">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Update logo</h5>
+                <div class="card-body">
+                    <form action="">
+                        <div class="mb-3">
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn-secondary btn ml-auto d-block">Update Logo</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5 offset-md-1">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Update your company Information</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Update" 
+                    asp-controller="Company" 
+                    asp-area="Employer" 
+                    asp-route-id="@Model.Id" 
+                    data-ajax="true"
+                    data-ajax-complete="companyUpdateRequestCallback"
+                    method="POST">
+                    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                    <partial name="_CompanyUpdatePartial"/>
+                    <div id="partial-container">
+
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-secondary">Update Company Info</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="company-update-alert-success" style="display: none;">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Hurray!</strong> Company Update Successful.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @* <partial name="_ValidationScriptsPartial"></partial> *@
+    <partial name="_AjaxPartial"></partial>
+    <script>
+        companyUpdateRequestCallback = function(xhr){
+            var responseType = xhr.getResponseHeader("content-type");
+            console.log(responseType);
+            if(responseType !=null && responseType.includes("text/html")){
+                document.getElementById("partial-container").innerHTML = xhr.responseText;
+            }else {
+                document.getElementById("company-update-alert-success").style.display = "block";
+            }
+        }
+    </script>
+}

@@ -1,0 +1,44 @@
+@model Company
+@{
+    ViewBag.Title = Model.Name + ": Job and Vacancy";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-3">
+    <div class="company-detail-hero d-flex flex-row  align-items-center justify-content-start px-5 mb-3">
+        <img src="~/@Model.GetBrandImagePath" class="company-logo company-logo-round">
+        <h2 class="ml-5 company-name">@Model.Name</h2>
+    </div>
+    <h3 class="my-2">Company Info</h3>
+    <p>@Model.Info</p>
+    <div class="row my-4">
+        <div class="col-md-8">
+            <h4 class="opening-position">Current Opening Positions at <strong>@Model.Name</strong> </h4>
+            @if (Model.Jobs.Count() != 0)
+            {
+                <div class="openings">
+                    @foreach (var job in Model.Jobs)
+                    {
+                        <div class="opening-post">
+                            <a asp-action="Detail" asp-controller="Job" asp-area="" asp-route-id="@job.Id">
+                                <img src="~/@Model.GetBrandImagePath" class="company-logo" alt="">
+                            </a>
+                            <div class="d-flex flex-column ml-4 justify-content-start">
+                                <a asp-action="Detail" asp-controller="Job" asp-area="" asp-route-id="@job.Id" class="text-primary d-block"
+                                    style="font-size: 1.5rem; margin-top:-.5rem;">@job.Title</a>
+                                <p><span class="fas fa-suitcase text-primary"></span> @Model.Name</p>
+                                <p><span class="fas fa-location-arrow text-success"></span> @Model.Location</p>
+                                <p><span class="fas fa-tags text-success"></span> job Tags</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else{
+                <h3>Sorry! No any jobs openings now</h3>
+            }
+        </div>
+    </div>
+
+
+</div>

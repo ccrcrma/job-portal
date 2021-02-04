@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using job_portal.Data;
 
 namespace job_portal.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20210204053002_AlterTableApplicationUser")]
+    partial class AlterTableApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -252,13 +254,16 @@ namespace job_portal.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("BrandImage")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("Info")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Location")
+                        .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300)");
 
@@ -266,18 +271,6 @@ namespace job_portal.Migrations
                         .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300)");
-
-                    b.Property<string>("Phone")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("Slogan")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("Website")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 

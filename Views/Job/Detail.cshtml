@@ -89,10 +89,31 @@
                         <li>Deadline : <span>@Model.Deadline.GetHumanFriendlyDate()</span></li>
                     </ul>
                     <div class="actions d-flex flex-column">
-                        <a href="#" class="btn bg-warning">Visit Company Page</a>
+                        <a asp-action="Detail" 
+                            asp-controller="Company" 
+                            asp-area="Employer" 
+                            asp-route-id="@Model.Company.Name.Hyphenate()"  
+                            class="btn bg-warning">Visit Company Page</a>
+
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <a href="#" class="btn bg-success">Apply Now</a>
+                            <div id="apply-for-job">
+                                @if((await _userManager.FindByUsersAsync(User)).IsApplied(Model.Id)){
+                                    <span  class="w-100 mb-2 d-block p-2 text-center text-white" style="background-color: #218e3aa3;">Applied To Job!!!</span>
+                                }else
+                                {
+                                    <form id="apply-form"
+                                        asp-action="ApplyJob"
+                                        asp-controller="Seeker" 
+                                        asp-area="Seeker" 
+                                        data-ajax="true"
+                                        data-ajax-complete="applyRequestCallback"
+                                        class="mb-2"> 
+                                        <input type="hidden" name="jobId" value="@Model.Id">
+                                        <button type="submit" class="btn bg-success w-100">Apply Now</button>
+                                    </form>
+                                }
+                            </div>
                             @if((await _userManager.GetUserAsync(User)).IsSaved(Model.Id))
                             {
                                 <form asp-action="RemoveJob" data-action-type-save asp-controller="Seeker" asp-area="Seeker">
@@ -110,21 +131,6 @@
                         }
                     </div>
                 </div>
-                <div class="post-details4  mb-50">
-                    <!-- Small Section Tittle -->
-                    <div class="small-section-tittle">
-                        <h4>Company Information</h4>
-                    </div>
-                    <span>Colorlib</span>
-                    <p>It is a long established fact that a reader will be distracted by the readable content of a
-                        page
-                        when looking at its layout.</p>
-                    <ul>
-                        <li>Name: <span>Colorlib </span></li>
-                        <li>Web : <span> colorlib.com</span></li>
-                        <li>Email: <span>carrier.colorlib@gmail.com</span></li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
@@ -133,7 +139,25 @@
 
 
 @section Scripts{
+    <partial name="_AjaxPartial"></partial>
     <script>
+        function applyRequestCallback(xhr){
+            switch(xhr.status){
+                case 200:
+                    const {message} = xhr.responseJSON;
+                    var applyForm = document.getElementById("apply-form")
+                    var parentNode = applyForm.parentNode;
+                    @* console.dir(parentNode.innerHTML); *@
+                    var successSpan = document.createElement("span");
+                    successSpan.classList.add("w-100",  "mb-2" ,"d-block" ,"p-2" ,"text-center", "text-white");
+                    successSpan.style.backgroundColor = "#218e3aa3";
+                    successSpan.innerHTML = "Applied To Job!!!";
+                    parentNode.removeChild(applyForm)
+                    parentNode.prepend(successSpan);
+                    @* console.dir(parentNode.innerHTML); *@
+                break;
+            }
+        }
         async function SaveUnsaveJob(url, data){
             var response = await fetch(url, {body: data,method: "POST"})
                 body =  await response.json();

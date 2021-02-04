@@ -2,7 +2,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using job_portal.Areas.Administration.Models;
+using job_portal.Areas.Employer.Models;
 using job_portal.Areas.Identity.Models;
+using job_portal.Areas.Seeker.Models;
 using job_portal.EFConfigurations;
 using job_portal.Extensions;
 using job_portal.Extensions.SoftDeleteQueryExtension;
@@ -26,12 +28,13 @@ namespace job_portal.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Job> Jobs { get; set; }
+        public DbSet<Company> Companies { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
             optionsBuilder
-                .UseLazyLoadingProxies()
+                // .UseLazyLoadingProxies()
                 .LogTo(Console.WriteLine, LogLevel.Information);
         }
 
@@ -66,16 +69,17 @@ namespace job_portal.Data
 
             modelBuilder.ApplyConfiguration(new PostConfiguration());
             modelBuilder.ApplyConfiguration(new JobConfiguration());
+            modelBuilder.ApplyConfiguration(new CompanyConifguration());
 
             modelBuilder.ApplyConfiguration(new ProfileConfiguration());
 
             modelBuilder.Entity<ApplicationUser>(applicationUser =>
             {
-                applicationUser.Property(u => u.FirstName).IsRequired().HasMaxLength(100);
-                applicationUser.Property(u => u.LastName).IsRequired().HasMaxLength(100);
+                applicationUser.Property(u => u.FirstName).HasMaxLength(100);
+                applicationUser.Property(u => u.LastName).HasMaxLength(100);
                 applicationUser.Property(u => u.MiddleName).HasMaxLength(100);
-                applicationUser.Property(u => u.DOB).IsRequired().HasColumnType("date");
-                applicationUser.Property(u => u.Gender).IsRequired().HasColumnType("tinyint(2)").HasMaxLength(100);
+                applicationUser.Property(u => u.DOB).IsRequired(false).HasColumnType("date");
+                applicationUser.Property(u => u.Gender).IsRequired(false).HasColumnType("tinyint(2)").HasMaxLength(100);
                 applicationUser.Property(u => u.CreatedOn).IsRequired().HasColumnType("timestamp").HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             });
@@ -94,6 +98,7 @@ namespace job_portal.Data
                 sj.HasKey(sj => new { sj.UserId, sj.JobId });
             });
 
+            modelBuilder.ApplyConfiguration(new AppliedJobConfiguration());
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 if (entityType.ClrType.IsSubclassOf(typeof(PublishableEntity)) && typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))

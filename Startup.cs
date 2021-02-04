@@ -154,6 +154,12 @@ namespace job_portal
                     defaults: new { controller = "Account", action = "RegisterEmployerUser" }
                 );
                 endpoints.MapAreaControllerRoute(
+                    name: "employer-route",
+                    areaName: "Employer",
+                    pattern: "employer/{controller=Company}/{action=Index}/{id?}"
+                );
+
+                endpoints.MapAreaControllerRoute(
                     name: "identity-routes",
                     areaName: "Identity",
                     pattern: "account/{action}/{id?}",

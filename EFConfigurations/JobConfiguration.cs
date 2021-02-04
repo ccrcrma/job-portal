@@ -1,3 +1,5 @@
+using System;
+using job_portal.Areas.Employer.Models;
 using job_portal.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -26,6 +28,11 @@ namespace job_portal.EFConfigurations
                 .HasForeignKey("category_id");
             builder.Property<int>("category_id").HasDefaultValue(17);
 
+            builder.HasOne<Company>(j => j.Company)
+                .WithMany(c => c.Jobs)
+                .HasForeignKey(j => j.CompanyId)
+                .IsRequired();
+            builder.Property(j => j.CompanyId).HasDefaultValue(new Guid("08d8c80c-8ae8-4db6-8b44-08056b25c4b0"));
         }
     }
 }

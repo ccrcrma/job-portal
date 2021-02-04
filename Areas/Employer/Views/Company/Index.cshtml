@@ -1,0 +1,22 @@
+@model List<Company>
+@{
+    ViewBag.Title = "Index";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-3">
+    <h2>All companies</h2>
+    <div class="row">
+        @foreach(var company in Model){
+        <div class="col-md-4">
+            <div class="card">
+                <img src="~/@company.GetBrandImagePath" alt="" class="card-img-top company-logo">
+                <div class="card-body">
+                    <h3 class="card-title">@company.Name</h3>
+                    <a asp-action="Detail" asp-route-id="@company.Name.Hyphenate()" class="btn btn-primary">Visit Company</a>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>

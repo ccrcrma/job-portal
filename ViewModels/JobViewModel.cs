@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using job_portal.Models;
+using job_portal.Types;
 using job_portal.ValidationAttributes;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static job_portal.Models.Job;
@@ -36,6 +37,12 @@ namespace job_portal.ViewModels
         [Display(Name = "Experience In Years")]
         [Range(minimum: 1, maximum: 30)]
         public int ExperienceRequired { get; set; }
+
+        [Required(ErrorMessage = "{0} is Required")]
+        [Display(Name = "Status")]
+        public PublishedStatus Status { get; set; }
+
+
         public List<SelectListItem> JobCategories = new List<SelectListItem>();
         public Job ToModel(Job job = null)
         {

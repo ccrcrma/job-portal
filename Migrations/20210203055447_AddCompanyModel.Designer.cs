@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using job_portal.Data;
 
 namespace job_portal.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20210203055447_AddCompanyModel")]
+    partial class AddCompanyModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -245,20 +247,23 @@ namespace job_portal.Migrations
                     b.ToTable("testimonial");
                 });
 
-            modelBuilder.Entity("job_portal.Areas.Employer.Models.Company", b =>
+            modelBuilder.Entity("job_portal.Areas.Employer.Model.Company", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
                     b.Property<string>("BrandImage")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("Info")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Location")
+                        .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300)");
 
@@ -266,18 +271,6 @@ namespace job_portal.Migrations
                         .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300)");
-
-                    b.Property<string>("Phone")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("Slogan")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("Website")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
@@ -304,7 +297,7 @@ namespace job_portal.Migrations
                         .HasColumnType("timestamp")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<DateTime?>("DOB")
+                    b.Property<DateTime>("DOB")
                         .HasColumnType("date");
 
                     b.Property<string>("Email")
@@ -315,14 +308,16 @@ namespace job_portal.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<sbyte?>("Gender")
+                    b.Property<sbyte>("Gender")
                         .HasMaxLength(100)
                         .HasColumnType("tinyint(2)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
@@ -422,27 +417,7 @@ namespace job_portal.Migrations
                     b.ToTable("Profile");
                 });
 
-            modelBuilder.Entity("job_portal.Areas.Seeker.Models.AppliedJob", b =>
-                {
-                    b.Property<int>("JobId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<DateTime>("AppliedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.HasKey("JobId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AppliedJob");
-                });
-
-            modelBuilder.Entity("job_portal.Areas.Seeker.Models.SavedJob", b =>
+            modelBuilder.Entity("job_portal.Areas.Identity.Models.SavedJob", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("varchar(255)");
@@ -490,11 +465,6 @@ namespace job_portal.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    b.Property<Guid>("CompanyId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValue(new Guid("08d8c80c-8ae8-4db6-8b44-08056b25c4b0"));
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("date");
@@ -550,8 +520,6 @@ namespace job_portal.Migrations
                         .HasDefaultValue(17);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
 
                     b.HasIndex("category_id");
 
@@ -647,26 +615,7 @@ namespace job_portal.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("job_portal.Areas.Seeker.Models.AppliedJob", b =>
-                {
-                    b.HasOne("job_portal.Models.Job", "Job")
-                        .WithMany("Appliers")
-                        .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("job_portal.Areas.Identity.Models.ApplicationUser", "User")
-                        .WithMany("AppliedJobs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Job");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("job_portal.Areas.Seeker.Models.SavedJob", b =>
+            modelBuilder.Entity("job_portal.Areas.Identity.Models.SavedJob", b =>
                 {
                     b.HasOne("job_portal.Models.Job", "Job")
                         .WithMany()
@@ -687,12 +636,6 @@ namespace job_portal.Migrations
 
             modelBuilder.Entity("job_portal.Models.Job", b =>
                 {
-                    b.HasOne("job_portal.Areas.Employer.Models.Company", "Company")
-                        .WithMany("Jobs")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("job_portal.Models.JobCategory", "Category")
                         .WithMany("Jobs")
                         .HasForeignKey("category_id")
@@ -700,27 +643,13 @@ namespace job_portal.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-
-                    b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("job_portal.Areas.Employer.Models.Company", b =>
-                {
-                    b.Navigation("Jobs");
                 });
 
             modelBuilder.Entity("job_portal.Areas.Identity.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("AppliedJobs");
-
                     b.Navigation("Profile");
 
                     b.Navigation("SavedJobs");
-                });
-
-            modelBuilder.Entity("job_portal.Models.Job", b =>
-                {
-                    b.Navigation("Appliers");
                 });
 
             modelBuilder.Entity("job_portal.Models.JobCategory", b =>

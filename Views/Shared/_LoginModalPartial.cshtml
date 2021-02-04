@@ -56,13 +56,11 @@
         $("#login-form").validate();
         if ($("#login-form").valid()) {
             var modalErrorDiv = document.querySelector("div.text-danger");
-        
             var formData = new FormData(form);
             var action = form.getAttribute("action");
             var response = await LoginHttpRequest(formData, action);
             console.log("fetch request made");
             responseBody = await response.json();
-            console.log(response.status);
             if (response.status == 400) {
                 var { errors } = responseBody;
                 modalErrorDiv = document.createElement("div");

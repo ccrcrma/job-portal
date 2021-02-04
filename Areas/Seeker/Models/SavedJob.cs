@@ -1,7 +1,8 @@
 using System;
+using job_portal.Areas.Identity.Models;
 using job_portal.Models;
 
-namespace job_portal.Areas.Identity.Models
+namespace job_portal.Areas.Seeker.Models
 {
     public class SavedJob
     {

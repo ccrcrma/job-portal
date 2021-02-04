@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using job_portal.Areas.Employer.Models;
+using job_portal.Areas.Seeker.Models;
 using job_portal.Interfaces;
 using job_portal.ViewModels;
 
@@ -41,6 +44,9 @@ namespace job_portal.Models
         public int ExperienceRequired { get; set; }
         public bool IsSoftDeleted { get; set; }
 
+        public virtual Company Company { get; set; }
+        public virtual List<AppliedJob> Appliers { get; set; } = new List<AppliedJob>();
+        public Guid CompanyId { get; set; }
         public JobViewModel ToViewModel()
         {
             return new JobViewModel
@@ -53,7 +59,8 @@ namespace job_portal.Models
                 Vacancy = Vacancy,
                 Deadline = Deadline,
                 Location = Location,
-                ExperienceRequired = ExperienceRequired
+                ExperienceRequired = ExperienceRequired,
+                Status = Status
             };
         }
     }

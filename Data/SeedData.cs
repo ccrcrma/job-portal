@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using job_portal.Models;
 using System.Collections.Generic;
 using job_portal.Areas.Administration.Models;
+using job_portal.Areas.Employer.Models;
 
 namespace job_portal.Data
 {
@@ -27,6 +28,7 @@ namespace job_portal.Data
             await SeedTags();
             await SeedPostsAsync();
             await SeedJobs();
+            await SeedCompanies();
         }
 
         private async Task SeedJobs()
@@ -214,6 +216,38 @@ namespace job_portal.Data
                     }
                 };
                 await _context.Posts.AddRangeAsync(posts);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task SeedCompanies()
+        {
+            if (await _context.Companies.CountAsync() == 0)
+            {
+                Company[] companies = {
+                new Company{
+                    Location = "Lalitpur",
+                    Name = "Percoid IT Solutions",
+                    Info = @"Percoid IT Solutions is an exclusive offshore development center for 
+                        BillboardPlanet, LLC., a leading provider of media management solutions for the 
+                        Out-of-Home Industry. In collaboaration with BillboardPlanet, we deliever Enterprise Level Applications
+                        used by clients in the United States, Canada, Mexico, and Central America. From advertisement arena to 
+                        hospitality business to restaurant businesses and POS integrations, we cater our products to clients of 
+                        various domains. With over 19+ years’ experience of BillboardPlanet, Percoid IT Solutions has been 
+                        operating in Nepal for over 8 years now. Through our deep industry experience and expert solution 
+                        architects, we have successfully launched and assisted BillboardPlanet in operating their products for 
+                        different chains from various industries. More than 200 individual franchisees are using their products 
+                        and we intend to build and develop newer technology every day.",
+                    BrandImage = "percoid.jpeg"
+                    },
+                new Company{
+                    Location = "Kathmandu",
+                    Name= "Vesuvio Labs",
+                    Info="Vesuvio Labs is a leading web-based solutions, web development, software solutions and IT service provider based in London and Kathmandu.",
+                    BrandImage="vesuvio.jpeg"
+                }
+            };
+                await _context.Companies.AddRangeAsync(companies);
                 await _context.SaveChangesAsync();
             }
         }

@@ -1,0 +1,59 @@
+@using System.Security.Claims
+@inject UserManager<ApplicationUser> _userManager
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title -job-portal</title>
+    <link rel="shortcut icon" type="image/x-icon" href="~/img/favicon.ico">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/fontawesome-all.min.css">
+    @RenderSection("StyleSheets", required:false)
+    <link rel="stylesheet" href="~/css/site.css">
+</head>
+
+<body style="background-color:#f5f5f5;">
+    <main>
+        <nav class="navbar navbar-light navbar-expand-md bg-light">
+            <div class="container">
+                <a asp-action="Home" asp-controller="Home" asp-area="" class="navbar-brand">Job Portal</a>
+                <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto d-flex align-items-center">
+                        <li class="nav-item">
+                            <a asp-action="Create" asp-controller="Job" asp-area=""  class="nav-link"><span class="btn btn-secondary">Post a job</span></a>
+                        </li>
+                        <li class="nav-item dropdown" id="navbarDropdown">
+                            <a href="#" class="nav-link dropdown-toggle"  data-toggle="dropdown">
+                                <span>@(((ClaimsIdentity)User.Identity).GetSpecificClaim("CompanyName"))</Span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="#" class="dropdown-item">Company</a>
+                                <a asp-action="MyJobs" asp-controller="Dashboard" asp-area="Employer" class="dropdown-item">MyJobs</a>
+                                <a href="#" class="dropdown-item">Applicants</a>
+                                <div class="dropdown-divider"></div>
+                                <form asp-action="Logout" asp-controller="Account" asp-area="Identity">
+                                    <input type="submit" value="Logout" class="dropdown-item">
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <partial name="_AlertPartial"></partial>
+        <div class="container my-5 p-3">
+            @RenderBody()
+        </div>
+    </main>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    @RenderSection("Scripts", false)
+</body>
+
+</html>

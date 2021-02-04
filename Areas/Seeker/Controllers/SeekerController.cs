@@ -19,6 +19,7 @@ using System;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Dynamic;
+using job_portal.Areas.Seeker.Models;
 
 namespace job_portal.Areas.Seeker.Controllers
 {
@@ -231,6 +232,20 @@ namespace job_portal.Areas.Seeker.Controllers
                 default:
                     return BadRequest();
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApplyJobAsync(int jobId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var job = await _context.Jobs.FirstOrDefaultAsync(j => j.Id == jobId);
+            if (job == null) return new BadRequestResult();
+            var user = await _context.Users.Include(u => u.AppliedJobs).FirstOrDefaultAsync(user => user.Id == userId);
+            user.AppliedJobs.Add(new AppliedJob { JobId = jobId });
+            await _context.SaveChangesAsync();
+            return new OkObjectResult(new { Message = "Application Sent Successfully" });
+
         }
     }
 }

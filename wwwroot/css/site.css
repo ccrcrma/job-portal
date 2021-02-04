@@ -48,12 +48,11 @@ div.actions > a {
 }
 
 a:last-child {
-    margin-bottom: 0 !important;
+    margin-bottom: 0;
 }
 
-
-.form-label{
-    margin-bottom: .5rem;
+.form-label {
+    margin-bottom: 0.5rem;
     vertical-align: bottom;
     display: flex;
     align-items: center;
@@ -62,8 +61,54 @@ a:last-child {
 .row > .form-label {
     margin-bottom: 0;
 }
-.img-profile{
+.img-profile {
     width: 100%;
     height: 200px;
     object-fit: cover;
+}
+
+.company-logo {
+    max-width: 100%;
+    height: 10rem;
+    object-fit: cover;
+}
+
+.company-logo-round {
+    border-radius: 50%;
+}
+
+.company-detail-hero {
+    height: 20rem;
+    background-image: linear-gradient(45deg, #fb246a, #f08080);
+}
+.company-name {
+    padding: 0.5rem;
+    color: white;
+    background-color: #fb246a;
+}
+.opening-position {
+    padding: 1rem 0.5rem;
+    border: 2px solid #dddddd;
+}
+
+.opening-post {
+    display: flex;
+    padding: 1rem;
+    border: 2px solid #dddddd;
+    margin-bottom: 0.5rem;
+}
+
+.opening-post p {
+    margin-block-start: 0em;
+    margin-block-end: 0.5em;
+}
+
+.job-type {
+    position: absolute;
+    top: 1.5rem;
+}
+@media (max-width: 991px) and (min-width:767px) {
+    .job-type {
+        top: 2.6rem;
+    }
 }

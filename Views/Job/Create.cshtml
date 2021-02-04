@@ -1,71 +1,78 @@
 @model JobViewModel
 @using static job_portal.Models.Job
 @{
+    Layout = "/Areas/Employer/Views/Shared/_Layout.cshtml";
     ViewBag.Title ="Create job";
 }
-<div class="container mt-5">
-    <h2 class="text-center">Create a new Job</h2>
-    <form asp-action="Create" asp-controller="Job" class="mb-5">
-        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
-        <div class="mb-3">
-            <label asp-for="Title" class="form-label"></label>
-            <input asp-for="Title" class="form-control">
-            <span class="text-danger" asp-validation-for="Title"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Description" class="form-label"></label>
-            <textarea asp-for="Description" class="form-control" rows="10"></textarea>
-            <span class="text-danger" asp-validation-for="Description"></span>
-        </div>
 
-        <div class="mb-3">
-            <label asp-for="Location" class="form-label"></label>
-            <input asp-for="Location" class="form-control">
-            <span class="text-danger" asp-validation-for="Location"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Type" class="form-label"></label>
-            <select asp-for="Type" class="form-control" asp-items="Html.GetEnumSelectList<JobType>()">
-                <option value="">Select job duration type</option>
-            </select>
-            <span class="text-danger" asp-validation-for="Type"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Category" class="form-label"></label>
-            <select asp-for="Category" class="form-control" asp-items="Model.JobCategories">
-                <option value="">Select job category</option>
-            </select>
-            <span class="text-danger" asp-validation-for="Category"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="SalaryMin" class="form-label"></label>
-            <input asp-for="SalaryMin" class="form-control">
-            <span class="text-danger" asp-validation-for="SalaryMin"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="SalaryMax" class="form-label"></label>
-            <input asp-for="SalaryMax" class="form-control">
-            <span class="text-danger" asp-validation-for="SalaryMax"></span>
-        </div>
+<h2 >Create a new Job</h2>
+<form asp-action="Create" asp-controller="Job" class="mb-5">
+    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control">
+        <span class="text-danger" asp-validation-for="Title"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="10"></textarea>
+        <span class="text-danger" asp-validation-for="Description"></span>
+    </div>
 
-        <div class="mb-3">
-            <label asp-for="Vacancy" class="form-label"></label>
-            <input asp-for="Vacancy" class="form-control">
-            <span class="text-danger" asp-validation-for="Vacancy"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Deadline" class="form-label"></label>
-            <input asp-for="Deadline" class="form-control">
-            <span class="text-danger" asp-validation-for="Deadline"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="ExperienceRequired" class="form-label"></label>
-            <input asp-for="ExperienceRequired" class="form-control">
-            <span class="text-danger" asp-validation-for="ExperienceRequired"></span>
-        </div>
-        <button type="submit" class="btn bg-primary">Create</button>
-    </form>
-</div>
+    <div class="mb-3">
+        <label asp-for="Location" class="form-label"></label>
+        <input asp-for="Location" class="form-control">
+        <span class="text-danger" asp-validation-for="Location"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Type" class="form-label"></label>
+        <select asp-for="Type" class="form-control" asp-items="Html.GetEnumSelectList<JobType>()">
+            <option value="">Select job duration type</option>
+        </select>
+        <span class="text-danger" asp-validation-for="Type"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Category" class="form-label"></label>
+        <select asp-for="Category" class="form-control" asp-items="Model.JobCategories">
+            <option value="">Select job category</option>
+        </select>
+        <span class="text-danger" asp-validation-for="Category"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="SalaryMin" class="form-label"></label>
+        <input asp-for="SalaryMin" class="form-control">
+        <span class="text-danger" asp-validation-for="SalaryMin"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="SalaryMax" class="form-label"></label>
+        <input asp-for="SalaryMax" class="form-control">
+        <span class="text-danger" asp-validation-for="SalaryMax"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Vacancy" class="form-label"></label>
+        <input asp-for="Vacancy" class="form-control">
+        <span class="text-danger" asp-validation-for="Vacancy"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Deadline" class="form-label"></label>
+        <input asp-for="Deadline" class="form-control">
+        <span class="text-danger" asp-validation-for="Deadline"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ExperienceRequired" class="form-label"></label>
+        <input asp-for="ExperienceRequired" class="form-control">
+        <span class="text-danger" asp-validation-for="ExperienceRequired"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<PublishedStatus>()">
+            <option value="">Please select published status</option>
+        </select>
+        <span class="text-danger" asp-validation-for="Status"></span>
+    </div>
+    <button type="submit" class="btn bg-primary">Create</button>
+</form>
 
 @section Scripts{
     <partial name="_ValidationScriptsPartial"></partial>

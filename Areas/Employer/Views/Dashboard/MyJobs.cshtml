@@ -1,0 +1,33 @@
+@model List<Job>
+@{
+    ViewBag.Title = "My jobs";
+}
+
+<div>
+    <h2 class="m-2 p-2">My Jobs</h2>
+</div>
+@foreach (var job in Model)
+{
+    <div class="d-flex justify-content-between m-2 p-2 align-items-center row" style="background-color: #FFFFFF;">
+    <div class="col-md-2 mb-3">
+        <img src="~/@job.Company.GetBrandImagePath" class="company-logo"></img>
+    </div>
+    <div class="col-md-3 mb-3" style="display: relative;">
+        <p><i class="fas fa-briefcase text-success mr-1"></i> Position: @job.Title </p>
+        <p class="job-type"><span class="far fa-clock text-success mr-1"></span>@job.Type.ToString()</p>
+    </div>
+    <div class="col-md-3 mb-3">
+        <span class="fas fa-location-arrow text-success mr-1"></span> Address: @job.Location
+    </div>
+    <div class="col-md-2 mb-3">
+        <i class="fas fa-calendar-alt text-success mr-1"></i>Date: @job.CreatedOn.GetHumanFriendlyDate()
+    </div>
+    <div class="d-flex flex-lg-row flex-md-column col-md-2 px-2">
+        <a asp-action="Detail" asp-controller="Job" asp-route-id="@job.Id" asp-area=""
+            class="btn btn-primary mb-2 mr-2">Read</a>
+        <a asp-action="Edit" asp-controller="Job" asp-route-id="@job.Id" asp-area=""
+            class="btn btn-secondary mb-2 mr-2">Edit</a>
+    </div>
+</div>
+}
+</div>
