@@ -43,7 +43,6 @@
     <partial name="_ValidationScriptsPartial"> </partial>
     <script>
     var form = document.getElementById("login-form");
-
     async function LoginHttpRequest(data, url) {
         var response = fetch(url, {
             body: data,
@@ -63,6 +62,9 @@
             responseBody = await response.json();
             if (response.status == 400) {
                 var { errors } = responseBody;
+                if(modalErrorDiv!=null){
+                    modalErrorDiv.innerHTML = "";
+                }
                 modalErrorDiv = document.createElement("div");
                 modalErrorDiv.style.marginLeft = "1.5rem";
                 modalErrorDiv.classList.add("text-danger")

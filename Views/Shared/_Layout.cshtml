@@ -1,5 +1,6 @@
 ﻿<!doctype html>
 <html class="no-js" lang="zxx">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -43,13 +44,14 @@
                                 <div class="main-menu">
                                     <nav class="d-none d-lg-block">
                                         <ul id="navigation">
-                                            <li><a asp-controller="Account" , asp-action="RegisterSeekerUser"
+                                            <li><a asp-controller="Account" asp-action="RegisterSeekerUser"
                                                     asp-area="Identity" class="menu-link-uppercase">For job seeker</a>
                                             </li>
                                             <li><a asp-controller="Account" asp-action="RegisterEmployerUser"
                                                     asp-area="Identity" class="menu-link-uppercase">For employer</a>
                                             </li>
-                                            <li><a asp-controller="Company" asp-action="Index" asp-area="Employer" class="menu-link-uppercase">Company</a></li>
+                                            <li><a asp-controller="Company" asp-action="Index" asp-area="Employer"
+                                                    class="menu-link-uppercase">Company</a></li>
                                         </ul>
                                     </nav>
                                 </div>

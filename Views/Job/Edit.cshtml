@@ -1,8 +1,13 @@
 @model JobViewModel
+@using static job_portal.Constants.Constant
 @using static job_portal.Models.Job
 @{
     ViewBag.Title ="Edit job";
-    Layout = "/Areas/Employer/Views/Shared/_Layout.cshtml";
+    @if(User.IsInRole(AdminRole)){
+        Layout ="/Areas/Administration/Views/Shared/_Layout.cshtml";
+    }else {
+        Layout ="/Areas/Employer/Views/Shared/_Layout.cshtml";
+    }
 }
 
 <h2>Edit  Job</h2>

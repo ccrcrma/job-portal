@@ -29,6 +29,9 @@ namespace job_portal.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<Profile> Profiles { get; set; }
+
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -147,6 +150,17 @@ namespace job_portal.Data
                             break;
                     }
                 }
+                // if (entry.Entity is ApplicationUser user)
+                // {
+                //     if (entry.State == EntityState.Added)
+                //     {
+                //         user.Profile = new Profile
+                //         {
+                //             Id = new Guid(),
+                //             UserId = user.Id
+                //         };
+                //     }
+                // }
             }
         }
 
@@ -159,7 +173,5 @@ namespace job_portal.Data
             OnBeforeSaving();
             return await base.SaveChangesAsync(acceptAllChangesOnSuccess);
         }
-
-
     }
 }

@@ -32,7 +32,7 @@
                 <tr>
                     <td>@job.CreatedDate</td>
                     <td>@job.Position</td>
-                    <td>Some company</td>
+                    <td>@job.Company.Name</td>
                     <td><published-status status="@StatusText" change-url="@StatusChangeUrl"></published-status></td>
                     <td><a href="@job.Url" class="btn btn-primary">Read</a></td>
                 </tr>
@@ -43,17 +43,17 @@
     <nav>
         <ul class="pagination">
             <li class="page-item @(Model.HasPreviousPage? "": "disabled")">
-                <a asp-action="Index" asp-controller="Job" asp-route-page="@(Model.CurrentPage -1)" class="page-link"  aria-label="Previous">
+                <a asp-action="AllJobs" asp-controller="Dashboard" asp-route-page="@(Model.CurrentPage -1)" class="page-link"  aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             @for(int i =1; i<=Model.TotalPage; i++){
                 <li class="page-item @(i == Model.CurrentPage ? "active": "")">
-                    <a asp-controller="Job" asp-action="Index" asp-route-page="@i" class="page-link">@i</a>
+                    <a asp-controller="Dashboard" asp-action="AllJobs" asp-route-page="@i" class="page-link">@i</a>
                 </li>
             }
             <li class="page-item  @(Model.HasNextPage? "": "disabled")">
-                <a  class="page-link" asp-controller="Job" asp-action="Index" asp-route-page="@(Model.CurrentPage +1)" aria-label="Next">
+                <a  class="page-link" asp-controller="Dashboard" asp-action="AllJobs" asp-route-page="@(Model.CurrentPage +1)" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>

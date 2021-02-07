@@ -1,32 +1,43 @@
 @model CompanyViewModel
 @{
     ViewBag.Title = "dashboard employee";
+    var partialModel = new ImageFormFileViewModel();
 }
 
-
-<h2>Many things coming soon</h2>
-
 <div class="row">
-    <div class="col-md-4">
-        <img src="" alt="current-logo">
+    <div class="col-md-4 mb-3">
+        <img src="~/@Model.ImagePath" 
+            alt="current-logo" 
+            class="company-logo mb-3" 
+            id="brand-image"
+            style="object-fit:contain; height:15rem; width:100%;">
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">Update logo</h5>
                 <div class="card-body">
-                    <form action="">
-                        <div class="mb-3">
-                            <input type="text" class="form-control">
+                    <form 
+                        asp-route-id="@Model.Id"
+                        asp-action="UpdateBrand"
+                        asp-controller="Company"
+                        data-ajax="true"
+                        data-ajax-complete="updateBrandImageRequestCallback"
+                        enctype="multipart/form-data">
+                        <div id="form-file-partial-container">
+                            @Html.Partial("_ImageFormFilePartial",partialModel)
                         </div>
-                        <div class="mb-3">
-                            <button type="submit" class="btn-secondary btn ml-auto d-block">Update Logo</button>
+                        <div class="form-group mt-3">
+                            <button type="submit" class="btn btn-secondary d-block ml-auto">Update</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+        <div id="brand-update-alert-success mt-3">
+
+        </div>
     </div>
-    <div class="col-md-5 offset-md-1">
-        <div class="card">
+    <div class="col-md-4">
+        <div class="card mb-2">
             <div class="card-header">
                 <h5 class="card-title">Update your company Information</h5>
             </div>
@@ -39,9 +50,8 @@
                     data-ajax-complete="companyUpdateRequestCallback"
                     method="POST">
                     <div class="text-danger" asp-validation-summary="ModelOnly"></div>
-                    <partial name="_CompanyUpdatePartial"/>
                     <div id="partial-container">
-
+                        <partial name="_CompanyUpdatePartial"/>
                     </div>
                     <div class="mb-3">
                         <button type="submit" class="btn btn-secondary">Update Company Info</button>
@@ -49,10 +59,25 @@
                 </form>
             </div>
         </div>
-        <div id="company-update-alert-success" style="display: none;">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Hurray!</strong> Company Update Successful.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+        <div id="company-update-alert-success">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    About Your company
+                </h5>
+            </div>
+            <div class="card-body">
+                <p> Name: @Model.Name</p>
+                <p>Website: <a href="@Model.Website" id="company-website">@Model.Website</a> </p>
+                <p>CompanyPage: <a 
+                    asp-action="Detail" 
+                    asp-controller="Company" 
+                    asp-area="Employer" 
+                    asp-route-id="@Model.Name.Hyphenate()">@Model.Name</a></p>
+            </div>
             </div>
         </div>
     </div>
@@ -60,16 +85,38 @@
 
 
 @section Scripts {
-    @* <partial name="_ValidationScriptsPartial"></partial> *@
+    <partial name="_ValidationScriptsPartial"></partial>
     <partial name="_AjaxPartial"></partial>
     <script>
         companyUpdateRequestCallback = function(xhr){
             var responseType = xhr.getResponseHeader("content-type");
-            console.log(responseType);
             if(responseType !=null && responseType.includes("text/html")){
                 document.getElementById("partial-container").innerHTML = xhr.responseText;
-            }else {
-                document.getElementById("company-update-alert-success").style.display = "block";
+            }else if(xhr.status ==200 && xhr.responseJSON!=null) {
+                var company = xhr.responseJSON;
+                document.getElementById("company-update-alert-success").innerHTML = 
+                `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Hurray!</strong> Company Update Successful.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                </div>`
+                document.getElementById("company-website").setAttribute("href", company.website);
+                document.getElementById("company-website").innerHTML = company.website;
+            }
+        }
+
+        updateBrandImageRequestCallback = function(xhr){
+            var responseType = xhr.getResponseHeader("content-type");
+            if(responseType !=null && responseType.includes("text/html")){
+                document.getElementById("form-file-partial-container").innerHTML = xhr.responseText;
+            }else if(xhr.status == 200) {
+                console.log("success");
+                document.getElementById("brand-image").setAttribute("src", xhr.responseJSON.url);
+                document.querySelector("input[type='file']").value = "";
+                document.getElementById("brand-update-alert-success").innerHTML = 
+                `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Hurray!</strong> brand logo update Successful.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                </div>`
             }
         }
     </script>

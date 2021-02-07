@@ -3,12 +3,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using job_portal.Areas.Administration.ViewModels;
 using job_portal.Data;
+using job_portal.DTOs;
+using job_portal.Extensions;
+using job_portal.Util;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 
 namespace job_portal.Areas.Administration.Controllers
 {
     [Area("Administration")]
+    [Authorize(Roles = Constants.Constant.AdminRole)]
     public class DashboardController : Controller
     {
         private readonly ApplicationContext _context;
@@ -17,6 +23,7 @@ namespace job_portal.Areas.Administration.Controllers
         {
             _context = context;
         }
+        [HttpGet]
         public async Task<IActionResult> IndexAsync()
         {
             var posts = _context.Posts
@@ -91,7 +98,7 @@ namespace job_portal.Areas.Administration.Controllers
                     Status = p.Status,
                     Description = p.Description,
                     UpdatedOn = p.UpdatedOn,
-                    DeleteRestoreUrl = Url.RouteUrl("default", new {controller="Job",  action = "Restore", id = p.Id }),
+                    DeleteRestoreUrl = Url.RouteUrl("default", new { controller = "Job", action = "Restore", id = p.Id }),
                 })
                 .ToList();
 
@@ -101,6 +108,45 @@ namespace job_portal.Areas.Administration.Controllers
             vm.OrderByDescending(m => m.UpdatedOn);
             return View(vm);
 
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AllJobs(int page = 1)
+        {
+            var jobsQueryable = _context.Jobs
+                .IgnoreQueryFilters()
+                .OrderByDescending(j => j.UpdatedOn)
+                .Include(j => j.Company)
+                .Select(j => new JobDTO
+                {
+                    CreatedDate = j.CreatedOn.GetHumanFriendlyDate(),
+                    Position = j.Title,
+                    Status = new
+                    {
+                        Text = j.Status.ToString(),
+                        ChangeUrl = Url.RouteUrl("default", new { Controller = "Job", action = "ChangeStatus", id = $"{j.Id}" })
+                    },
+                    Company = j.Company,
+                    Url = Url.RouteUrl("default", new { controller = "Job", action = "Detail", id = $"{j.Id}" })
+                });
+            var vm = await PaginationModal<JobDTO>.CreateAsync(jobsQueryable, pageIndex: page);
+            var accept = Request.Headers[HeaderNames.Accept];
+            if (accept == "application/json")
+            {
+                return Ok(new
+                {
+                    items = vm,
+                    metaData = new
+                    {
+                        BaseUrl = Url.RouteUrl("dashboard", new { controller = "Dashboard", action = "AllJobs" }),
+                        HasPrevious = vm.HasPreviousPage,
+                        HasNext = vm.HasNextPage,
+                        CurrentPage = vm.CurrentPage,
+                        TotalPage = vm.TotalPage
+                    }
+                });
+            }
+            return View(vm);
         }
     }
 }

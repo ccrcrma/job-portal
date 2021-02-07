@@ -57,6 +57,10 @@ namespace job_portal.Areas.Identity.Controllers
                     {
                         return Ok(new { Url = Url.Action("Index", controller: "Dashboard", new { area = "Employer" }) });
                     }
+                    else if (await _userManager.IsInRoleAsync(user, Constants.Constant.AdminRole))
+                    {
+                        return Ok(new { Url = Url.Action("Index", controller: "Dashboard", new { area = "Administration" }) });
+                    }
                     return Ok(new { Url = Url.Action("Index", controller: "Seeker", new { area = "Seeker" }) });
                 }
                 else
@@ -206,6 +210,7 @@ namespace job_portal.Areas.Identity.Controllers
             if (result.Succeeded)
             {
                 _logger.LogInformation("user created successfully");
+                await _userManager.AddToRoleAsync(user, "Seeker");
                 await SendEmailConfirmationLinkAsync(user);
                 if (_userManager.Options.SignIn.RequireConfirmedEmail)
                 {
@@ -310,7 +315,7 @@ namespace job_portal.Areas.Identity.Controllers
             if (result.Succeeded)
             {
                 _logger.LogInformation("UserCreated Successfully");
-                var claim = new Claim("CompanyName", company.Name);
+                var claim = new Claim(Constants.Constant.CompanyNameClaim, company.Name);
                 await _userManager.AddClaimAsync(employerUser, claim);
                 if (_userManager.Options.SignIn.RequireConfirmedEmail)
                 {
@@ -333,7 +338,6 @@ namespace job_portal.Areas.Identity.Controllers
                 return View(vm);
             }
 
-            return LocalRedirect("~/").WithSuccess("employer account created successfully", string.Empty);
         }
 
         [HttpGet]

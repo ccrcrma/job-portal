@@ -18,14 +18,14 @@
                 <div class="single-job-items mb-50" style="background-color:#F8F8F8;">
                     <div class="job-items">
                         <div class="company-img company-img-details">
-                            <a href="#"><img src="~/img/icon/job-list1.png" alt=""></a>
+                            <a href="#"><img src="~/@Model.Company.GetBrandImagePath" alt="@Model.Company.Name" class="company-logo"></a>
                         </div>
                         <div class="job-tittle">
                             <a href="#">
                                 <h4>@Model.Title</h4>
                             </a>
                             <ul>
-                                <li>Creative Agency</li>
+                                <li>@Model.Company.Name</li>
                                 <li><i class="fas fa-map-marker-alt"></i>@Model.Location</li>
                                 <li>@Model.GetFormattedSalary</li>
                             </ul>
@@ -114,11 +114,11 @@
                                     </form>
                                 }
                             </div>
-                            @if((await _userManager.GetUserAsync(User)).IsSaved(Model.Id))
+                            @if((await _userManager.FindByUsersAsync(User)).IsSaved(Model.Id))
                             {
-                                <form asp-action="RemoveJob" data-action-type-save asp-controller="Seeker" asp-area="Seeker">
+                                <form asp-action="UnsaveJob" data-action-type-save asp-controller="Seeker" asp-area="Seeker">
                                     <input type="hidden" name="jobId" value="@Model.Id">
-                                    <button type="submit" name="save-unsave-button" class="btn bg-danger w-100">Remove Job</button>
+                                    <button type="submit" name="save-unsave-button" class="btn bg-danger w-100">UnSave Job</button>
                                 </form>
                             }else
                             {

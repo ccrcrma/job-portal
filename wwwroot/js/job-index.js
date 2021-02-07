@@ -39,7 +39,6 @@ window.addEventListener("load", function(event){
         if(response.status == 200)
         {
             window.history.pushState("", "",response.url);
-            console.log(response.url);
             var json = await response.json();
             const {items, metaData} = json
             const {baseUrl, hasPrevious, hasNext, totalPage, currentPage} = metaData;
@@ -52,9 +51,9 @@ window.addEventListener("load", function(event){
                 tdDate.appendChild(text);
 
                 let tdTitle = document.createElement("td");
-                tdTitle.innerHTML = d.position
+                tdTitle.innerHTML = d.position;
                 let tdCompany = document.createElement("td");
-                tdCompany.innerHTML = d.company;
+                tdCompany.innerHTML = d.company.name;
 
                 let tdStatus = document.createElement("td");
                 const { changeUrl} = d.status

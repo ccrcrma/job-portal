@@ -8,10 +8,12 @@ using job_portal.Areas.Administration.Models;
 using System.IO;
 using job_portal.Extensions;
 using job_portal.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace job_portal.Areas.Administration.Controllers
 {
     [Area("Administration")]
+    [Authorize(Roles = Constants.Constant.AdminRole)]
     public class PostController : Controller
     {
         private readonly IFileStorageService _fileService;
@@ -53,6 +55,16 @@ namespace job_portal.Areas.Administration.Controllers
             return LocalRedirect("~/");
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> IndexAsync()
+        {
+            var posts = await _context.Posts.ToListAsync();
+            return View(posts);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> DetailAsync(int id)
         {
             var post = await _context.Posts

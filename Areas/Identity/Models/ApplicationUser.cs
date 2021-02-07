@@ -26,7 +26,7 @@ namespace job_portal.Areas.Identity.Models
 
         public virtual List<SavedJob> SavedJobs { get; set; } = new List<SavedJob>();
         public virtual List<AppliedJob> AppliedJobs { get; set; } = new List<AppliedJob>();
-        public virtual Profile Profile { get; set; }
+        public virtual Profile Profile { get; set; } = new Profile();
 
         public void SaveJob(int jobId)
         {
@@ -56,9 +56,9 @@ namespace job_portal.Areas.Identity.Models
         {
             return new BasicProfileInfoViewModel
             {
-                Experience = Profile.Experience,
-                Bio = Profile.Bio,
-                Address = Profile.Address,
+                Experience = Profile?.Experience,
+                Bio = Profile?.Bio,
+                Address = Profile?.Address,
                 PhoneNumber = PhoneNumber
             };
         }

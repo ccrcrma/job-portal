@@ -7,16 +7,23 @@ using job_portal.Models;
 using System.Collections.Generic;
 using job_portal.Areas.Administration.Models;
 using job_portal.Areas.Employer.Models;
+using Microsoft.AspNetCore.Identity;
+using static job_portal.Constants.Constant;
+using job_portal.Areas.Identity.Models;
 
 namespace job_portal.Data
 {
     public class SeedData
     {
         private readonly ApplicationContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public SeedData(IServiceProvider serviceProvider)
         {
             _context = serviceProvider.GetRequiredService<ApplicationContext>();
+            _roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            _userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         }
 
@@ -29,6 +36,34 @@ namespace job_portal.Data
             await SeedPostsAsync();
             await SeedJobs();
             await SeedCompanies();
+            await SeedRoles();
+            await SeedUsers();
+        }
+
+        private async Task SeedUsers()
+        {
+            var adminEmail = "admin@jobportal.com";
+            var adminExists = await _userManager.Users.AnyAsync(u => u.Email == adminEmail);
+            if (adminExists) return;
+            var adminUser = new ApplicationUser()
+            {
+                Email = adminEmail,
+                UserName = adminEmail
+            };
+            await _userManager.CreateAsync(adminUser, "admin");
+            await _userManager.AddToRoleAsync(adminUser, Constants.Constant.AdminRole);
+        }
+
+        private async Task SeedRoles()
+        {
+            string[] roles = { AdminRole, SeekerRole };
+            foreach (var role in roles)
+            {
+                if (!(await _roleManager.RoleExistsAsync(role)))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
         }
 
         private async Task SeedJobs()

@@ -1,5 +1,7 @@
+@inject UserManager<ApplicationUser> _userManager
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,35 +10,67 @@
     @RenderSection("Stylesheets", required:false)
 </head>
 
-<body class="bg-light">
-    <main>
-        <div class="container my-5">
-            <partial name="_AlertPartial"></partial>
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title p-2"  style="background-color: #e8e8e8;">  
-                                Menu
-                            </h5>
-                            <ul class="list-group">
-                                <a  asp-action="Index" asp-controller="Dashboard" asp-area="Administration" class="list-group-item list-group-item-action active">Home</a></li>
-                                <a  asp-action="Create" asp-controller="Post" asp-area="Administration" class="list-group-item list-group-item-action">Create Post</a></li>
-                                <a  asp-action="Trash" asp-controller="Dashboard" asp-area="Administration" class="list-group-item list-group-item-action">Trash</a></li>
-                                <a  asp-action="Index" asp-controller="Testimonial" asp-area="Administration" class="list-group-item list-group-item-action">View Testimonial</a></li>
-                                <a  asp-action="Create" asp-controller="Testimonial" asp-area="Administration" class="list-group-item list-group-item-action">Create Testimonial</a></li>
-                                <a  asp-action="Index" asp-controller="Job" asp-area=""  class="list-group-item list-group-item-action">View Jobs</a></li>
-                            </ul>
+<body>
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">JobPortal</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @((await _userManager.GetUserAsync(User)).UserName)
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <form asp-action="Logout" asp-controller="Account" asp-area="Identity">
+                                <button class="dropdown-item" href="#">LogoOut</button>
+                            </form>
                         </div>
-                    </div>
-                 
-                </div>
-                <div class="col-md-8 offset-md-1 bg-white py-2">
-                    @RenderBody()
-                </div>
+                    </li>
+
+                </ul>
             </div>
         </div>
-    </main>
+
+    </nav>
+    <div class="container my-5">
+        <partial name="_AlertPartial"></partial>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title p-2" style="background-color: #e8e8e8;">
+                            Menu
+                        </h5>
+                        <ul class="list-group">
+                            <a asp-action="Index" asp-controller="Dashboard" asp-area="Administration"
+                                class="list-group-item list-group-item-action active">Home</a></li>
+                            <a asp-action="Create" asp-controller="Post" asp-area="Administration"
+                                class="list-group-item list-group-item-action">Create Post</a></li>
+                            <a asp-action="Trash" asp-controller="Dashboard" asp-area="Administration"
+                                class="list-group-item list-group-item-action">Trash</a></li>
+                            <a asp-action="Index" asp-controller="Testimonial" asp-area="Administration"
+                                class="list-group-item list-group-item-action">View Testimonial</a></li>
+                            <a asp-action="Create" asp-controller="Testimonial" asp-area="Administration"
+                                class="list-group-item list-group-item-action">Create Testimonial</a></li>
+                            <a asp-action="AllJobs" asp-controller="Dashboard" asp-area="Administration"
+                                class="list-group-item list-group-item-action">View Jobs</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 offset-md-1 bg-white py-2">
+                <main>
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    </div>
     <partial name="_JsPartials"></partial>
     @RenderSection(name:"Scripts", required:false)
     @Html.PageScripts()

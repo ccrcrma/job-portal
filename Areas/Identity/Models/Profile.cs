@@ -33,7 +33,7 @@ namespace job_portal.Areas.Identity.Models
                 return Path.Combine("documents/cover-letter", CoverLetter);
             }
         }
-        public string ImagePath
+        public string ProfileImagePath
         {
             get
             {

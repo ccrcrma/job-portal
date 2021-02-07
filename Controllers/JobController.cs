@@ -1,3 +1,4 @@
+using job_portal.AuthorizationAttribute;
 using job_portal.Data;
 using job_portal.DTOs;
 using job_portal.Extensions;
@@ -5,25 +6,34 @@ using job_portal.Interfaces;
 using job_portal.Models;
 using job_portal.Util;
 using job_portal.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using static job_portal.Constants.Constant;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using job_portal.Requirements;
 
 namespace job_portal.Controllers
 {
+    [MultiplePoliciesAuthorization(andPolicies: false, EmployerPolicy, AdminPolicy)]
+
     public class JobController : Controller
     {
+        private readonly IAuthorizationService _authorizationService;
         private readonly ApplicationContext _context;
         private readonly ILogger<JobController> _logger;
 
-        public JobController(ApplicationContext context, ILogger<JobController> logger)
+        public JobController(ApplicationContext context,
+            ILogger<JobController> logger,
+            IAuthorizationService authorizationService)
         {
+            _authorizationService = authorizationService;
             _context = context;
             _logger = logger;
         }
@@ -41,55 +51,33 @@ namespace job_portal.Controllers
         public async Task<IActionResult> ChangeStatusAsync(int id)
         {
             _logger.LogInformation($"request to change status for {id}");
-            var job = await _context.Jobs.IgnoreQueryFilters().FirstOrDefaultAsync(j => j.Id == id);
-            if (job == null) return BadRequest();
-            job.ChangePublishedStatus();
-            await _context.SaveChangesAsync();
-            return Ok(new
-            {
-                Status = job.Status.ToString(),
-                ChangeUrl = Url.RouteUrl("default", new { Controller = "Job", Action = "ChangeStatus", id = $"{id}" })
-            });
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> IndexAsync(int page = 1)
-        {
-            var jobsQueryable = _context.Jobs
+            var job = await _context.Jobs
                 .IgnoreQueryFilters()
-                .OrderByDescending(j => j.UpdatedOn)
-                .Select(j => new JobDTO
-                {
-                    CreatedDate = j.CreatedOn.GetHumanFriendlyDate(),
-                    Position = j.Title,
-                    Status = new
-                    {
-                        Text = j.Status.ToString(),
-                        ChangeUrl = Url.RouteUrl("default", new { Controller = "Job", action = "ChangeStatus", id = $"{j.Id}" })
-                    },
-                    Company = "some random company",
-                    Url = Url.RouteUrl("default", new { controller = "Job", action = "Detail", id = $"{j.Id}" })
-                });
-            var vm = await PaginationModal<JobDTO>.CreateAsync(jobsQueryable, pageIndex: page);
-            var accept = Request.Headers[HeaderNames.Accept];
-            if (accept == "application/json")
+                .Include(j => j.Company)
+                .FirstOrDefaultAsync(j => j.Id == id);
+            if (job == null) return BadRequest();
+            var authResult = await _authorizationService.AuthorizeAsync(User, job, new OwnsJobRequirement(job.Company.Name));
+            if (authResult.Succeeded)
             {
+                job.ChangePublishedStatus();
+                await _context.SaveChangesAsync();
                 return Ok(new
                 {
-                    items = vm,
-                    metaData = new
-                    {
-                        BaseUrl = Url.RouteUrl("default", new { controller = "Job", action = "Index" }),
-                        HasPrevious = vm.HasPreviousPage,
-                        HasNext = vm.HasNextPage,
-                        CurrentPage = vm.CurrentPage,
-                        TotalPage = vm.TotalPage
-                    }
+                    Status = job.Status.ToString(),
+                    ChangeUrl = Url.RouteUrl("default", new { Controller = "Job", Action = "ChangeStatus", id = $"{id}" })
                 });
             }
+            else if (User.Identity.IsAuthenticated)
+            {
+                return new ForbidResult();
+            }
+            else
+            {
+                return new ChallengeResult();
+            }
 
-            return View(vm);
         }
+
         private void SetCategories(JobViewModel vm)
         {
             vm.JobCategories = _context.Set<JobCategory>().Select(job => new SelectListItem
@@ -121,13 +109,32 @@ namespace job_portal.Controllers
         [HttpGet]
         public async Task<IActionResult> EditAsync(int id)
         {
-            var job = await _context.Jobs.Include(j => j.Category).IgnoreQueryFilters()
+
+            var job = await _context.Jobs
+                .Include(j => j.Category)
+                .Include(j => j.Company)
+                .IgnoreQueryFilters()
             .FirstOrDefaultAsync(j => j.Id == id);
             if (job == null)
                 return NotFound();
-            var vm = job.ToViewModel();
-            SetCategories(vm);
-            return View(vm);
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User,
+                job, new OwnsJobRequirement(job.Company.Name));
+
+            if (authorizationResult.Succeeded)
+            {
+                var vm = job.ToViewModel();
+                SetCategories(vm);
+                return View(vm);
+            }
+            else if (User.Identity.IsAuthenticated)
+            {
+                return new ForbidResult();
+            }
+            else
+            {
+                return new ChallengeResult();
+            }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -171,20 +178,35 @@ namespace job_portal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditAsync(int id, JobViewModel vm)
         {
-            var job = await _context.Jobs.FirstOrDefaultAsync(job => job.Id == id);
-            if (job == null) return BadRequest();
             if (!ModelState.IsValid)
             {
                 SetCategories(vm);
                 return View(vm);
             }
-            job = vm.ToModel(job);
-            _context.Entry(job.Category).State = EntityState.Unchanged;
-            await _context.SaveChangesAsync();
-            return LocalRedirect("~/");
+            var job = await _context.Jobs
+                .Include(j => j.Company)
+                .FirstOrDefaultAsync(job => job.Id == id);
+            if (job == null) return BadRequest();
+            var authResult = await _authorizationService.AuthorizeAsync(User, job, new OwnsJobRequirement(job.Company.Name));
+            if (authResult.Succeeded)
+            {
+                job = vm.ToModel(job);
+                _context.Entry(job.Category).State = EntityState.Unchanged;
+                await _context.SaveChangesAsync();
+                return LocalRedirect("~/").WithSuccess("hurray", "job updated successfully");
+            }
+            else if (User.Identity.IsAuthenticated)
+            {
+                return new ForbidResult();
+            }
+            else
+            {
+                return new ChallengeResult();
+            }
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> DetailAsync(int id)
         {
             var job = await _context.Jobs

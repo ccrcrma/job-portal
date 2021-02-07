@@ -14,10 +14,12 @@ using job_portal.Services;
 using Microsoft.EntityFrameworkCore;
 using job_portal.Models;
 using job_portal.Areas.Administration.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace job_portal.Areas.Administration.Controllers
 {
     [Area("Administration")]
+    [Authorize(Roles=Constants.Constant.AdminRole)]
     public class TestimonialController : Controller
     {
         private readonly IFileStorageService _fileStorageService;

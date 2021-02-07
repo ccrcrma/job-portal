@@ -20,11 +20,12 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Dynamic;
 using job_portal.Areas.Seeker.Models;
+using job_portal.ViewModels;
 
 namespace job_portal.Areas.Seeker.Controllers
 {
     [Area("Seeker")]
-    [Authorize]
+    [Authorize(Roles = "Seeker")]
     public class SeekerController : Controller
     {
         private readonly ApplicationContext _context;
@@ -86,7 +87,7 @@ namespace job_portal.Areas.Seeker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveJobAsync(int jobId)
+        public async Task<IActionResult> UnsaveJobAsync(int jobId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var job = await _context.Jobs.FirstOrDefaultAsync(j => j.Id == jobId);
@@ -95,7 +96,7 @@ namespace job_portal.Areas.Seeker.Controllers
                 return new BadRequestObjectResult(new { Error = "Job with given Id doesn't exist" });
             }
 
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _userManager.FindByUsersAsync(User);
             user.RemoveJob(jobId);
             await _context.SaveChangesAsync();
             var SuccessMessage = new
@@ -122,7 +123,7 @@ namespace job_portal.Areas.Seeker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-        public async Task<IActionResult> ProfileInfoAsync(BasicProfileInfoViewModel vm)
+        public async Task<IActionResult> UpdateProfileInfoAsync(BasicProfileInfoViewModel vm)
         {
             if (!ModelState.IsValid) { return PartialView("_BasicProfileInfo", vm); }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -158,11 +159,7 @@ namespace job_portal.Areas.Seeker.Controllers
             }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.Users.Include(u => u.Profile).FirstOrDefaultAsync(u => u.Id == userId);
-            if (user.Profile == null)
-            {
-                user.Profile = new Profile();
-            }
-            _fileStorageService.DeleteFile(user.Profile.ImagePath);
+            _fileStorageService.DeleteFile(user.Profile.ProfileImagePath);
             var fileName = await _fileStorageService.SaveFileAsync(vm.FormFile,
                 job_portal.Areas.Identity.Models.Profile.BaseImageDir);
             user.Profile.ImageName = fileName;
@@ -206,32 +203,6 @@ namespace job_portal.Areas.Seeker.Controllers
             }
             await _context.SaveChangesAsync();
             return Ok(returnObject);
-        }
-
-        [HttpGet("download")]
-        public IActionResult DownloadFile(string fileName, string documentType, string originalFileName)
-        {
-            if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(documentType))
-            {
-                return BadRequest();
-            }
-            string FilePath;
-            string BaseDirectory;
-            switch (documentType)
-            {
-                case "cv":
-                    BaseDirectory = _configuration["Documents:Resume"];
-                    FilePath = Path.Combine(BaseDirectory, fileName);
-                    FilePath = "~/" + FilePath;
-                    return File(FilePath, "application/pdf", WebUtility.HtmlDecode(originalFileName));
-                case "cover-letter":
-                    BaseDirectory = _configuration["Documents:CoverLetter"];
-                    FilePath = Path.Combine(BaseDirectory, fileName);
-                    FilePath = "~/" + FilePath;
-                    return File(FilePath, "application/pdf", WebUtility.HtmlDecode(originalFileName));
-                default:
-                    return BadRequest();
-            }
         }
 
         [HttpPost]

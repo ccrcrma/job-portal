@@ -34,7 +34,6 @@ namespace job_portal.Areas.Employer.ViewModels
         [Required(ErrorMessage = "{0} is Required")]
         [StringLength(100, ErrorMessage = "{0} must be greater than {2} characters", MinimumLength = 5)]
         public string Slogan { get; set; }
-
         public string ImagePath { get; set; }
 
         public Company ToModel(Company company)

@@ -8,7 +8,7 @@ namespace job_portal.EFConfigurations
     {
         public void Configure(EntityTypeBuilder<Profile> builder)
         {
-
+            builder.ToTable("Profile");
             builder.Property(p => p.ImageName).HasMaxLength(100);
             builder.HasOne<ApplicationUser>().WithOne(u => u.Profile).HasForeignKey("Profile", "UserId").IsRequired();
             builder.HasKey(p => p.Id);

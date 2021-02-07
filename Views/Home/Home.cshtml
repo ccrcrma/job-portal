@@ -291,12 +291,13 @@
                         <div class="single-job-items mb-30">
                             <div class="job-items">
                                 <div class="company-img">
-                                    <a href="job_details.html"><img src="~/img/icon/job-list1.png" alt="company logo of poster"></a>
+                                    <a href="job_details.html"><img src="~/@job.Company.GetBrandImagePath" class="company-brand"
+                                    alt="@job.Company.Name logo"></a>
                                 </div>
                                 <div class="job-tittle">
                                     <a asp-action="Detail" asp-controller="Job" asp-route-id="@job.Id"><h4>@job.Title</h4></a>
                                     <ul>
-                                        <li>Company posting job</li>
+                                        <li>@job.Company.Name</li>
                                         <li><i class="fas fa-map-marker-alt"></i>@job.Location</li>
                                         <li>@job.GetFormattedSalary</li>
                                     </ul>

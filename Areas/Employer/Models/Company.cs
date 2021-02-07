@@ -10,6 +10,7 @@ namespace job_portal.Areas.Employer.Models
     public class Company
     {
         public const string BaseBrandImageDirectory = "img/companies";
+        public const string DefaultLogo = "img/companies/default-brand.png";
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
@@ -22,7 +23,7 @@ namespace job_portal.Areas.Employer.Models
         {
             get
             {
-                if (string.IsNullOrEmpty(BrandImage)) return string.Empty;
+                if (string.IsNullOrEmpty(BrandImage)) return DefaultLogo;
                 return Path.Combine(BaseBrandImageDirectory, BrandImage);
             }
         }
@@ -39,7 +40,7 @@ namespace job_portal.Areas.Employer.Models
                 Website = Website,
                 Slogan = Slogan,
                 ImagePath = GetBrandImagePath,
-                Info = Info
+                Info = Info,
             };
         }
 

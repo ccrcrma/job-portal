@@ -64,13 +64,21 @@ a:last-child {
 .img-profile {
     width: 100%;
     height: 200px;
-    object-fit: cover;
+    object-fit: contain;
+}
+.img-profile-small {
+    height: 8rem;
 }
 
 .company-logo {
     max-width: 100%;
     height: 10rem;
     object-fit: cover;
+}
+.company-brand{
+    width: 10rem;
+    height: 10rem;
+    object-fit: contain;
 }
 
 .company-logo-round {
@@ -107,7 +115,7 @@ a:last-child {
     position: absolute;
     top: 1.5rem;
 }
-@media (max-width: 991px) and (min-width:767px) {
+@media (max-width: 991px) and (min-width: 767px) {
     .job-type {
         top: 2.6rem;
     }

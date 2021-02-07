@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using job_portal.Areas.Identity.Models;
 using job_portal.Areas.Identity.Pages.Conventions;
@@ -10,7 +8,7 @@ using job_portal.Services;
 using job_portal.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using static job_portal.Constants.Constant;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +17,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Twilio;
+using Microsoft.AspNetCore.Authorization;
+using job_portal.AuthorizationHandlers;
 
 namespace job_portal
 {
@@ -71,7 +71,15 @@ namespace job_portal
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/";
+                options.AccessDeniedPath = "/error/accessdenied";
             });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(EmployerPolicy, policy => policy.RequireClaim(CompanyNameClaim));
+                options.AddPolicy(AdminPolicy, policy => policy.RequireRole(AdminRole));
+            });
+            services.AddSingleton<IAuthorizationHandler, JobAuthorizationHandler>();
 
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddSingleton<IMailService, MailService>();

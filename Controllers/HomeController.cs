@@ -53,7 +53,9 @@ namespace job_portal.Controllers
         private async Task<List<Job>> GetFilteredJobs(SearchFilterViewModel searchFilterViewModel)
         {
             var category = searchFilterViewModel.Category;
-            var jobs = _context.Jobs.Include(j => j.Category).AsQueryable();
+            var jobs = _context.Jobs
+                .Include(j => j.Company)
+                .Include(j => j.Category).AsQueryable();
             if (category != null && !category.ToLower().Equals("all"))
             {
                 category = category.ToLower();

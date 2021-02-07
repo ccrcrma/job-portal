@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using job_portal.ValidationAttributes;
 using Microsoft.AspNetCore.Http;
 
-namespace job_portal.Areas.Seeker.ViewModels
+namespace job_portal.ViewModels
 {
     public class ImageFormFileViewModel
     {

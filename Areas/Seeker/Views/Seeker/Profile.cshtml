@@ -9,11 +9,16 @@
 <h2>User Profile </h2>
 <div class="row bg-light pt-3">
     <div class="col-md-4 mb-3">
-        @if(!string.IsNullOrEmpty(Model.Profile.ImagePath)){
-            <img src="~/@Model.Profile.ImagePath" class="img-profile" alt="your current profile picture" id ="profile-pic">
+        @if(!string.IsNullOrEmpty(Model.Profile?.ProfileImagePath)){
+            <img src="~/@Model.Profile.ProfileImagePath" class="img-profile" alt="your current profile picture" id ="profile-pic">
 
+        }else 
+        if(Model.Gender == job_portal.Areas.Identity.Types.Gender.Male)
+        {
+            <img src="~/img/profiles/default-male.jpeg" class="img-profile" alt="default male profile picture" id="profile-pic">
         }else {
-            <img src="~/img/team/2.png" class="img-profile" alt="default picture" id="profile-pic">
+            <img src="~/img/profiles/default-female.jpg" class="img-profile" alt="default female profile picture" id="profile-pic">
+
         }
         <div class="card my-3">
             <div class="card-header">
@@ -41,7 +46,7 @@
                 <h6 class="card-title">Update your profile</h6>
             </div>
             <div class="card-body">
-                <form asp-action="ProfileInfo" data-ajax="true" data-ajax-complete="profileInfoCallback" >
+                <form asp-action="UpdateProfileInfo" data-ajax="true" data-ajax-complete="profileInfoCallback" >
                     <div id="profile-form-container">
                         @{await Html.RenderPartialAsync("_BasicProfileInfo",basicProfileInfoVm);}
                     </div>
@@ -76,7 +81,7 @@
                 </div>
                 <div class="form-group row">
                     <label for="Name" class="form-label col-sm-4">Address</label>
-                    <input type="text" readonly value="@Model.Profile.Address" class="form-control col-sm-8">
+                    <input type="text" readonly value="@Model.Profile?.Address" class="form-control col-sm-8">
                     <span class="text-danger"></span>
                 </div>
                 <div class="form-group row">
@@ -90,21 +95,50 @@
                     <span class="text-danger"></span>
                 </div>
                 <div class="form-group">
+                    @if(Model.Profile.CoverLetter == null){
                     <a 
                         data-document-type="cover-letter"
+                        asp-area=""
+                        asp-controller="File"
+                        asp-action="DownloadFile" 
+                        asp-route-fileName="@Model.Profile?.CoverLetter"
+                        asp-route-originalFileName="@Model.Profile?.CoverLetterOriginalName",
+                        asp-route-documentType="cover-letter"
+                        style="display: none;">cover letter</a>
+                    }else {
+                        <a 
+                        data-document-type="cover-letter"
+                        asp-area=""
+                        asp-controller="File"
                         asp-action="DownloadFile" 
                         asp-route-fileName="@Model.Profile?.CoverLetter"
                         asp-route-originalFileName="@Model.Profile?.CoverLetterOriginalName",
                         asp-route-documentType="cover-letter">cover letter</a>
+                    }
 
                 </div>
                 <div class="form-group">
-                    <a  
+                    @if(Model.Profile.Resume == null){
+
+                    <a  style="display:none;"
                         data-document-type="cv"
+                        asp-area=""
+                        asp-controller="File"
                         asp-action="DownloadFile"
                         asp-route-fileName="@Model.Profile?.Resume"
                         asp-route-originalFileName="@Model.Profile?.ResumeOriginalName"
                         asp-route-documentType="cv">resume</a>
+                    }else {
+                        <a 
+                        data-document-type="cv"
+                        asp-area=""
+                        asp-controller="File"
+                        asp-action="DownloadFile"
+                        asp-route-fileName="@Model.Profile?.Resume"
+                        asp-route-originalFileName="@Model.Profile?.ResumeOriginalName"
+                        asp-route-documentType="cv">resume</a>
+
+                    }
                 </div>
             </div>
         </div>
@@ -218,6 +252,7 @@
 
         function uploadLinkUrl(linkDataSetValue, responseData){
             var elem= document.querySelector(`a[data-document-type="${linkDataSetValue}"]`);
+            elem.style.display="block";
             var relativeUrl = elem.getAttribute("href");
             var pathUrl = relativeUrl.substring(0, relativeUrl.indexOf("?"));
             var queryParams = relativeUrl.substring(relativeUrl.indexOf("?")+1);
@@ -225,14 +260,12 @@
             for(const propery in responseData){
                 searchParams.set(propery, responseData[propery]);
             }
-            console.log(searchParams.toString());
             var url = pathUrl + "?" + searchParams.toString();
             elem.setAttribute("href", url);
 
         }
 
         function AfterFileUploadTask(xhr, data){
-            console.log(xhr.responseJSON);
             const {alertContainer, successMessage, formContainer} = data;
             switch(xhr.status){
                 case 200:
